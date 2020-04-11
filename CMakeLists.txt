@@ -11,4 +11,4 @@ include_directories("${PROJECT_SOURCE_DIR}/thirdparty/spdlog/include")
 add_subdirectory(src)
 
 add_executable(main main.cpp)
-target_link_libraries(main Utils)
+target_link_libraries(main Utils RTCore)
