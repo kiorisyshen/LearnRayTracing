@@ -1,0 +1,6 @@
+[submodule "ThirdParty/eigen"]
+	path = ThirdParty/eigen
+	url = https://gitlab.com/libeigen/eigen
+[submodule "ThirdParty/spdlog"]
+	path = ThirdParty/spdlog
+	url = https://github.com/gabime/spdlog.git
