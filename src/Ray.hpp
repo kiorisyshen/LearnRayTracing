@@ -8,10 +8,10 @@ class Ray {
         : orig(origin), dir(direction) {
     }
 
-    Vec3d origin() const {
+    const Vec3d &origin() const {
         return orig;
     }
-    Vec3d direction() const {
+    const Vec3d &direction() const {
         return dir;
     }
 
@@ -19,7 +19,7 @@ class Ray {
         return orig + t * dir;
     }
 
-   public:
+   private:
     Vec3d orig;
     Vec3d dir;
 };
