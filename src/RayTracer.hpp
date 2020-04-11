@@ -2,8 +2,8 @@
 
 #include "Camera.hpp"
 #include "Frame.hpp"
+#include "HittableList.hpp"
 #include "Ray.hpp"
-#include "utils/Logger.hpp"
 
 namespace LearnRT {
 class RayTracer {
@@ -11,10 +11,10 @@ class RayTracer {
     RayTracer() {
     }
 
-    bool drawFrame(Frame<Vec3d> &frame, const Camera &camera);
+    bool drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world);
 
    protected:
-    Vec3d calcRayColor(const Ray &r);
+    Vec3d calcRayColor(const Ray &r, const HittableList &world);
 };
 
 }  // namespace LearnRT

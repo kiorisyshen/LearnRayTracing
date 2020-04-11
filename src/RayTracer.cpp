@@ -2,7 +2,7 @@
 
 using namespace LearnRT;
 
-bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera) {
+bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world) {
     bool ret = true;
 
     const int image_width  = frame.getWidth();
@@ -20,7 +20,7 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera) {
         for (int i = 0; i < image_width; ++i) {
             auto u         = double(i) / image_width;
             auto v         = double(j) / image_height;
-            frame.at(j, i) = calcRayColor(Ray(origin, LB_corner + u * d_horizontal + v * d_vertical));
+            frame.at(j, i) = calcRayColor(Ray(origin, LB_corner + u * d_horizontal + v * d_vertical), world);
         }
     }
     Logger::GetLogger().info("Draw frame done!");
@@ -28,17 +28,11 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera) {
     return ret;
 }
 
-Vec3d RayTracer::calcRayColor(const Ray &r) {
-    static Vec3d center  = Vec3d(0, 0, -1);
-    static double radius = 0.5;
+Vec3d RayTracer::calcRayColor(const Ray &r, const HittableList &world) {
+    HitRecord rec = world.hit(r, 0, INFI);
 
-    Vec3d co    = center - r.origin();
-    Vec3d nd    = r.direction().normalized();
-    double dist = co.cross(nd).norm();
-    if (dist < radius) {
-        double t = co.dot(nd) - sqrt(radius * radius - dist * dist);
-        Vec3d N  = (r.at(t) - center).normalized();
-        return 0.5 * (Vec3d(1, 1, 1) + N);
+    if (rec.valid) {
+        return 0.5 * (rec.normal + Vec3d(1, 1, 1));
     }
 
     Vec3d unit_direction = r.direction().normalized();

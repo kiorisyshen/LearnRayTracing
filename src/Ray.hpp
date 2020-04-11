@@ -5,7 +5,7 @@ namespace LearnRT {
 class Ray {
    public:
     Ray(const Vec3d &origin, const Vec3d &direction)
-        : orig(origin), dir(direction) {
+        : orig(origin), dir(direction.normalized()) {
     }
 
     const Vec3d &origin() const {

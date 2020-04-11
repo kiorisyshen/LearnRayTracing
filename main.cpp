@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Frame.hpp"
-#include "PPM.hpp"
 #include "RayTracer.hpp"
-#include "utils/Logger.hpp"
+#include "geometry/Sphere.hpp"
+#include "io/PPM.hpp"
 
 using namespace LearnRT;
 
@@ -15,7 +15,11 @@ int main() {
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
     RayTracer rt;
     Camera cam(2.0, 2.0);
-    if (!rt.drawFrame(finalImage, cam)) {
+    HittableList world;
+    world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5));
+    world.add(std::make_shared<Sphere>(Vec3d(0, -100.5, -1), 100));
+
+    if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;
     }

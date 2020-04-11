@@ -1,9 +1,11 @@
 #pragma once
 #include "Eigen"
+#include "utils/Logger.hpp"
 
 namespace LearnRT {
-static double EPS = 1e-7;
-static double PI  = M_PI;
+static const double EPS  = 1e-7;
+static const double PI   = M_PI;
+static const double INFI = std::numeric_limits<double>::infinity();
 // ------------------------------
 // - Base
 // ------------------------------
