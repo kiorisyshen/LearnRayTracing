@@ -14,7 +14,8 @@ int main() {
 
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
     RayTracer rt;
-    if (!rt.drawFrame(finalImage)) {
+    Camera cam(2.0, 2.0);
+    if (!rt.drawFrame(finalImage, cam)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;
     }
