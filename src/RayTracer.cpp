@@ -28,21 +28,17 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera) {
     return ret;
 }
 
-bool hit_sphere(const Vec3d &center, double radius, const Ray &r) {
-    // Vec3d oc          = r.origin() - center;
-    // auto a            = r.direction().dot(r.direction());
-    // auto b            = 2.0 * oc.dot(r.direction());
-    // auto c            = oc.dot(oc) - radius * radius;
-    // auto discriminant = b * b - 4 * a * c;
-    // return (discriminant > 0);
-
-    return (center - r.origin()).cross(r.direction().normalized()).norm() < radius;
-}
-
 Vec3d RayTracer::calcRayColor(const Ray &r) {
-    if (hit_sphere(Vec3d(0, 0, -1), 0.5, r)) {
-        return Vec3d(1, 0, 0);
-        Logger::GetLogger().info("Hello");
+    static Vec3d center  = Vec3d(0, 0, -1);
+    static double radius = 0.5;
+
+    Vec3d co    = center - r.origin();
+    Vec3d nd    = r.direction().normalized();
+    double dist = co.cross(nd).norm();
+    if (dist < radius) {
+        double t = co.dot(nd) - sqrt(radius * radius - dist * dist);
+        Vec3d N  = (r.at(t) - center).normalized();
+        return 0.5 * (Vec3d(1, 1, 1) + N);
     }
 
     Vec3d unit_direction = r.direction().normalized();
