@@ -5,22 +5,22 @@ using namespace LearnRT;
 bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world) {
     bool ret = true;
 
-    const int image_width  = frame.getWidth();
-    const int image_height = frame.getHeight();
-    const double vwidth    = camera.getVWidth();
-    const double vheight   = camera.getVHeight();
-
-    const Vec3d origin(0, 0, 0);
-    const Vec3d d_vertical(0, vheight, 0);
-    const Vec3d d_horizontal(vwidth, 0, 0);
-    const Vec3d LB_corner(-vwidth / 2.0, -vheight / 2.0, -1.0);
+    const int image_width       = frame.getWidth();
+    const int image_height      = frame.getHeight();
+    const int samples_per_pixel = 10;
 
     for (int j = image_height - 1; j > -1; --j) {
         Logger::GetLogger().info("Scanlines remaining: {}", j);
         for (int i = 0; i < image_width; ++i) {
-            auto u         = double(i) / image_width;
-            auto v         = double(j) / image_height;
-            frame.at(j, i) = calcRayColor(Ray(origin, LB_corner + u * d_horizontal + v * d_vertical), world);
+            Vec3d &currColor = frame.at(j, i);
+            currColor        = Vec3d::Zero();
+            for (int s = 0; s < samples_per_pixel; ++s) {
+                auto u = (i + randomDouble()) / image_width;
+                auto v = (j + randomDouble()) / image_height;
+                currColor += calcRayColor(camera.getRay(u, v), world);
+            }
+
+            frame.at(j, i) = currColor / samples_per_pixel;
         }
     }
     Logger::GetLogger().info("Draw frame done!");

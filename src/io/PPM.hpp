@@ -18,9 +18,9 @@ class PPM {
         for (int j = image_height - 1; j > -1; --j) {
             for (int i = 0; i < image_width; ++i) {
                 const Vec3d &e = frame.at(j, i);
-                out << static_cast<int>(255.999 * e[0]) << ' '
-                    << static_cast<int>(255.999 * e[1]) << ' '
-                    << static_cast<int>(255.999 * e[2]) << '\n';
+                out << static_cast<int>(255.999 * clamp(e[0], 0, 1)) << ' '
+                    << static_cast<int>(255.999 * clamp(e[1], 0, 1)) << ' '
+                    << static_cast<int>(255.999 * clamp(e[2], 0, 1)) << '\n';
             }
         }
     }
