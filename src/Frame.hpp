@@ -12,11 +12,11 @@ class Frame {
     }
 
     T &at(uint32_t row, uint32_t col) {
-        return m_Data[row * m_Width + m_Height];
+        return m_Data[row * m_Width + col];
     }
 
     const T &at(uint32_t row, uint32_t col) const {
-        return m_Data[row * m_Width + m_Height];
+        return m_Data[row * m_Width + col];
     }
 
     uint32_t getWidth() const {
