@@ -21,7 +21,7 @@ HittableList random_scene() {
             auto choose_mat      = randomDouble();
             auto choose_move     = randomDouble();
             double moveThreshold = 0.5;
-            Vec3d center(a * 2.0 + 0.9 * randomDouble(), 0.2, b * 2.0 + 0.9 * randomDouble());
+            Vec3d center(a * 2.0 + 1.9 * randomDouble(), 0.2, b * 2.0 + 1.9 * randomDouble());
             if ((center - Vec3d(4, 0.2, 0)).norm() > 0.9) {
                 if (choose_mat < 0.8) {
                     // diffuse
@@ -59,8 +59,8 @@ HittableList random_scene() {
 }
 
 int main() {
-    const int image_width  = 12 * 15;
-    const int image_height = 8 * 15;
+    const int image_width  = 12 * 20;
+    const int image_height = 8 * 20;
 
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
