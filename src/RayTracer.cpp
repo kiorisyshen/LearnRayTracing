@@ -29,9 +29,9 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
 }
 
 Vec3d RayTracer::calcRayColor(const Ray &r, const HittableList &world) {
-    HitRecord rec = world.hit(r, 0, INFI);
+    HitRecord rec;
 
-    if (rec.valid) {
+    if (world.hit(r, 0, INFI, rec)) {
         return 0.5 * (rec.normal + Vec3d(1, 1, 1));
     }
 

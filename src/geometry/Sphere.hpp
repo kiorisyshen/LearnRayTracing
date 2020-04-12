@@ -10,9 +10,8 @@ class Sphere : public IHittable {
     Sphere(Vec3d cen, double r)
         : m_Center(cen), m_Radius(r){};
 
-    virtual HitRecord hit(const Ray &r, double t_min, double t_max) const {
-        HitRecord ret;
-        ret.valid = false;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const {
+        rec.valid = false;
 
         Vec3d co    = m_Center - r.origin();
         Vec3d nd    = r.direction().normalized();
@@ -25,19 +24,19 @@ class Sphere : public IHittable {
 
             if (t < t_min || t > t_max) {
                 if (t2 < t_min || t2 > t_max) {
-                    return ret;
+                    return false;
                 }
                 t = t2;
             }
 
-            ret.valid = true;
-            ret.t     = t;
-            ret.p     = r.at(t);
-            ret.setFaceNormal(r, (ret.p - m_Center).normalized());
-            return ret;
+            rec.valid = true;
+            rec.t     = t;
+            rec.p     = r.at(t);
+            rec.setFaceNormal(r, (rec.p - m_Center).normalized());
+            return true;
         }
 
-        return ret;
+        return false;
     }
 
    public:

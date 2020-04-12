@@ -18,7 +18,7 @@ class HittableList : public IHittable {
         m_Objects.push_back(object);
     }
 
-    virtual HitRecord hit(const Ray &r, double t_min, double t_max) const;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const;
 
    protected:
     std::vector<std::shared_ptr<IHittable>> m_Objects;
