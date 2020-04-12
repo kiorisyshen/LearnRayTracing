@@ -92,4 +92,8 @@ inline double clamp(double x, double min, double max) {
     if (x > max) return max;
     return x;
 }
+
+inline Vec3d reflect(const Vec3d &v, const Vec3d &n) {
+    return v - 2.0 * v.dot(n) * n;
+}
 }  // namespace LearnRT

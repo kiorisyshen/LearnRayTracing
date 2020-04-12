@@ -5,10 +5,9 @@
 namespace LearnRT {
 class Sphere : public IHittable {
    public:
-    Sphere() {
+    Sphere(const Vec3d &cen, double r, std::shared_ptr<IMaterial> m)
+        : m_Center(cen), m_Radius(r), m_pMaterial(m) {
     }
-    Sphere(Vec3d cen, double r)
-        : m_Center(cen), m_Radius(r){};
 
     virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const {
         rec.valid = false;
@@ -33,6 +32,7 @@ class Sphere : public IHittable {
             rec.t     = t;
             rec.p     = r.at(t);
             rec.setFaceNormal(r, (rec.p - m_Center).normalized());
+            rec.materialPtr = m_pMaterial;
             return true;
         }
 
@@ -42,6 +42,7 @@ class Sphere : public IHittable {
    public:
     Vec3d m_Center;
     double m_Radius;
+    std::shared_ptr<IMaterial> m_pMaterial;
 };
 
 }  // namespace LearnRT

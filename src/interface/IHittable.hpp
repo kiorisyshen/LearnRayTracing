@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ray.hpp"
+#include "interface/IMaterial.hpp"
 
 namespace LearnRT {
 struct HitRecord {
@@ -8,6 +9,7 @@ struct HitRecord {
     double t;
     Vec3d p;
     Vec3d normal;
+    std::shared_ptr<IMaterial> materialPtr;
     bool front_face;
 
     inline void setFaceNormal(const Ray &r, const Vec3d &outward_normal) {

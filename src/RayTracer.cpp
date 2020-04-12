@@ -34,12 +34,15 @@ Vec3d RayTracer::calcRayColor(const Ray &r, const HittableList &world, int depth
     if (depth < 1) {
         return Vec3d::Zero();
     }
-    HitRecord rec;
 
+    HitRecord rec;
     if (world.hit(r, m_MinDistTrace, INFI, rec)) {
-        // Vec3d target = rec.p + rec.normal + random_in_unit_sphere();
-        Vec3d target = rec.p + rec.normal + random_unit_vector();
-        return 0.5 * calcRayColor(Ray(rec.p, target - rec.p), world, depth - 1);
+        Ray r_out;
+        Vec3d attenuation;
+        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, attenuation, r_out)) {
+            return attenuation.cwiseProduct(calcRayColor(r_out, world, depth - 1));
+        }
+        return Vec3d(0, 0, 0);
     }
 
     Vec3d unit_direction = r.direction().normalized();
