@@ -16,11 +16,11 @@ int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
-    RayTracer rt(50, 100, 2);
-    Camera cam(2.0, 2.0);
+    RayTracer rt(50, 10, 2);
+    Camera cam(PI / 2.0, double(image_width) / double(image_height), Vec3d(-0.5, 1, 0), Vec3d(0, 0, -1));
     HittableList world;
 
-    world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5, std::make_shared<Lambertian>(Vec3d(0.7, 0.3, 0.3))));
+    world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5, std::make_shared<Lambertian>(Vec3d(0.2, 0.3, 0.4))));
     world.add(std::make_shared<Sphere>(Vec3d(0, -100.5, -1), 100, std::make_shared<Lambertian>(Vec3d(0.8, 0.8, 0.0))));
 
     world.add(std::make_shared<Sphere>(Vec3d(1, 0, -1), 0.5, std::make_shared<Metal>(Vec3d(0.8, 0.6, 0.2), 0.1)));
