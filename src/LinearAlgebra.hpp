@@ -9,19 +9,6 @@ static const double EPS  = 1e-7;
 static const double PI   = M_PI;
 static const double INFI = std::numeric_limits<double>::infinity();
 
-inline double randomDouble() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    static std::function<double()> rand_generator = std::bind(distribution, generator);
-    return rand_generator();
-}
-
-inline double clamp(double x, double min, double max) {
-    if (x < min) return min;
-    if (x > max) return max;
-    return x;
-}
-
 // ------------------------------
 // - Base
 // ------------------------------
@@ -62,4 +49,47 @@ using Mat4x4i = Eigen::Matrix4i;
 using MatXd = Eigen::MatrixXd;
 using MatXf = Eigen::MatrixXf;
 using MatXi = Eigen::MatrixXi;
+
+// ------------------------------
+// - Util functions for math
+// ------------------------------
+inline double randomDouble() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    static std::function<double()> rand_generator = std::bind(distribution, generator);
+    return rand_generator();
+}
+
+inline double randomDouble(double min, double max) {
+    return min + (max - min) * randomDouble();
+}
+
+inline Vec3d random() {
+    return Vec3d(randomDouble(), randomDouble(), randomDouble());
+}
+
+inline Vec3d random(double min, double max) {
+    return Vec3d(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+}
+
+inline Vec3d random_in_unit_sphere() {
+    while (true) {
+        auto p = random(-1, 1);
+        if (p.norm() >= 1) continue;
+        return p;
+    }
+}
+
+inline Vec3d random_unit_vector() {
+    auto a = randomDouble(0, 2 * PI);
+    auto z = randomDouble(-1, 1);
+    auto r = sqrt(1 - z * z);
+    return Vec3d(r * cos(a), r * sin(a), z);
+}
+
+inline double clamp(double x, double min, double max) {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+}
 }  // namespace LearnRT

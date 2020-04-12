@@ -13,7 +13,7 @@ int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
-    RayTracer rt;
+    RayTracer rt(20, 10, 1.0);
     Camera cam(2.0, 2.0);
     HittableList world;
     world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5));
