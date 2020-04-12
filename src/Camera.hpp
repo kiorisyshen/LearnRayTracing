@@ -8,17 +8,17 @@ class Camera {
         : m_TanHalfFOV(tan(fov / 2.0)), m_Aspect(aspect) {
         m_HalfAperture = aperture / 2.0;
 
-        double vhalfheight = m_TanHalfFOV * focusLength;
-        double vhalfwidth  = m_TanHalfFOV * aspect * focusLength;
+        double vhalfheight = m_TanHalfFOV;
+        double vhalfwidth  = m_TanHalfFOV * aspect;
 
         _wVec = (position - lookAtPt).normalized();
         _uVec = up.cross(_wVec).normalized();
         _vVec = _wVec.cross(_uVec);
 
         _origin     = position;
-        _vertical   = 2.0 * vhalfheight * _vVec;
-        _horizontal = 2.0 * vhalfwidth * _uVec;
-        _lbCorner   = _origin - vhalfwidth * _uVec - vhalfheight * _vVec - _wVec;
+        _vertical   = 2.0 * vhalfheight * focusLength * _vVec;
+        _horizontal = 2.0 * vhalfwidth * focusLength * _uVec;
+        _lbCorner   = _origin - vhalfwidth * focusLength * _uVec - vhalfheight * focusLength * _vVec - focusLength * _wVec;
     }
 
     Ray getRay(double u, double v) const {

@@ -64,17 +64,17 @@ inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
 }
 
-inline Vec3d random() {
+inline Vec3d randomVec() {
     return Vec3d(randomDouble(), randomDouble(), randomDouble());
 }
 
-inline Vec3d random(double min, double max) {
+inline Vec3d randomVec(double min, double max) {
     return Vec3d(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
 }
 
 inline Vec3d random_in_unit_sphere() {
     while (true) {
-        auto p = random(-1, 1);
+        auto p = randomVec(-1, 1);
         if (p.norm() >= 1) continue;
         return p;
     }
@@ -113,7 +113,7 @@ inline double schlick(double cosine, double ref_idx) {
 inline Vec3d random_in_unit_disk() {
     while (true) {
         auto p = Vec3d(randomDouble(-1, 1), randomDouble(-1, 1), 0);
-        if (p.norm() >= 1) continue;
+        if (p.squaredNorm() >= 1) continue;
         return p;
     }
 }
