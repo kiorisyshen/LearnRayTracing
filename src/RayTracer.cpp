@@ -19,10 +19,11 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
                 currColor += calcRayColor(camera.getRay(u, v), world, m_MaxRayDepth);
             }
 
+            currColor      = currColor / m_SamplePerPix;
             currColor(0)   = pow(currColor(0), m_OneOverGamma);
             currColor(1)   = pow(currColor(1), m_OneOverGamma);
             currColor(2)   = pow(currColor(2), m_OneOverGamma);
-            frame.at(j, i) = currColor / m_SamplePerPix;
+            frame.at(j, i) = currColor;
         }
     }
     Logger::GetLogger().info("Draw frame done!");
