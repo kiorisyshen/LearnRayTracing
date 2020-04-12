@@ -3,6 +3,7 @@
 #include "RayTracer.hpp"
 #include "geometry/Sphere.hpp"
 #include "io/PPM.hpp"
+#include "material/Dielectric.hpp"
 #include "material/Lambertian.hpp"
 #include "material/Metal.hpp"
 
@@ -15,17 +16,15 @@ int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
-    RayTracer rt(50, 100, 2.0);
+    RayTracer rt(50, 100, 2);
     Camera cam(2.0, 2.0);
     HittableList world;
-    // world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5));
-    // world.add(std::make_shared<Sphere>(Vec3d(0, -100.5, -1), 100));
-    world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5, std::make_shared<Lambertian>(Vec3d(0.7, 0.3, 0.3))));
 
+    world.add(std::make_shared<Sphere>(Vec3d(0, 0, -1), 0.5, std::make_shared<Lambertian>(Vec3d(0.7, 0.3, 0.3))));
     world.add(std::make_shared<Sphere>(Vec3d(0, -100.5, -1), 100, std::make_shared<Lambertian>(Vec3d(0.8, 0.8, 0.0))));
 
-    world.add(std::make_shared<Sphere>(Vec3d(1, 0, -1), 0.5, std::make_shared<Metal>(Vec3d(0.8, 0.6, 0.2), 1.0)));
-    world.add(std::make_shared<Sphere>(Vec3d(-1, 0, -1), 0.5, std::make_shared<Metal>(Vec3d(0.8, 0.8, 0.8), 0.3)));
+    world.add(std::make_shared<Sphere>(Vec3d(1, 0, -1), 0.5, std::make_shared<Metal>(Vec3d(0.8, 0.6, 0.2), 0.1)));
+    world.add(std::make_shared<Sphere>(Vec3d(-1, 0, -1), 0.5, std::make_shared<Dielectric>(1.5, Vec3d(1, 1, 1))));
 
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");

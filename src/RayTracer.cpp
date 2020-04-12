@@ -40,7 +40,7 @@ Vec3d RayTracer::calcRayColor(const Ray &r, const HittableList &world, int depth
     if (world.hit(r, m_MinDistTrace, INFI, rec)) {
         Ray r_out;
         Vec3d attenuation;
-        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, attenuation, r_out)) {
+        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, rec.front_face, attenuation, r_out)) {
             return attenuation.cwiseProduct(calcRayColor(r_out, world, depth - 1));
         }
         return Vec3d(0, 0, 0);

@@ -96,4 +96,17 @@ inline double clamp(double x, double min, double max) {
 inline Vec3d reflect(const Vec3d &v, const Vec3d &n) {
     return v - 2.0 * v.dot(n) * n;
 }
+
+inline Vec3d refract(const Vec3d &v, const Vec3d &n, double etai_over_etat) {
+    const Vec3d uv       = v.normalized();
+    Vec3d r_out_parallel = etai_over_etat * (uv + (-uv).dot(n) * n);
+    Vec3d r_out_perp     = -sqrt(1.0 - r_out_parallel.squaredNorm()) * n;
+    return r_out_parallel + r_out_perp;
+}
+
+inline double schlick(double cosine, double ref_idx) {
+    auto r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+    r0      = r0 * r0;
+    return r0 + (1.0 - r0) * pow((1.0 - cosine), 5.0);
+}
 }  // namespace LearnRT
