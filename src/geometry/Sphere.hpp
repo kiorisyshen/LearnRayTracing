@@ -15,34 +15,16 @@ class Sphere : public IHittable {
         m_Movable = true;
     }
 
-    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const {
-        rec.valid = false;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const;
 
-        Vec3d co    = center(r.time()) - r.origin();
-        Vec3d nd    = r.direction().normalized();
-        double dist = co.cross(nd).norm();
+    virtual bool boundingBox(double time0, double time1, AABB &output_box) const;
 
-        if (dist < m_Radius) {
-            double dt = sqrt(m_Radius * m_Radius - dist * dist);
-            double t  = co.dot(nd) - dt;
-            double t2 = t + dt + dt;
-
-            if (t < t_min || t > t_max) {
-                if (t2 < t_min || t2 > t_max) {
-                    return false;
-                }
-                t = t2;
-            }
-
-            rec.valid = true;
-            rec.t     = t;
-            rec.p     = r.at(t);
-            rec.setFaceNormal(r, (rec.p - center(r.time())).normalized());
-            rec.materialPtr = m_pMaterial;
-            return true;
+    virtual Vec3d getCenter() {
+        if (!m_Movable) {
+            return m_Center0;
         }
 
-        return false;
+        return (m_Center0 + m_Center1) / 2.0;
     }
 
    private:

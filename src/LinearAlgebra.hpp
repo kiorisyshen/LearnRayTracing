@@ -87,6 +87,14 @@ inline Vec3d random_unit_vector() {
     return Vec3d(r * cos(a), r * sin(a), z);
 }
 
+inline double ffmin(double a, double b) {
+    return a <= b ? a : b;
+}
+
+inline double ffmax(double a, double b) {
+    return a >= b ? a : b;
+}
+
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;
     if (x > max) return max;

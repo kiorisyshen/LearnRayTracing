@@ -31,6 +31,14 @@ class Camera {
         return Ray(_origin + offset, _lbCorner + u * _horizontal + v * _vertical - _origin - offset, randomDouble(_time0, _time1));
     }
 
+    double getT0() const {
+        return _time0;
+    }
+
+    double getT1() const {
+        return _time1;
+    }
+
    private:
     double m_TanHalfFOV;
     double m_Aspect;

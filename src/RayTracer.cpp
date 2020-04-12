@@ -1,12 +1,37 @@
 #include "RayTracer.hpp"
+#include "BVHNode.hpp"
 
 using namespace LearnRT;
+
+static Vec3d calcRayColor(const Ray &r, const BVHNode &bvhRoot, int depth, double minDistTrace) {
+    if (depth < 1) {
+        return Vec3d::Zero();
+    }
+
+    HitRecord rec;
+    if (bvhRoot.hit(r, minDistTrace, INFI, rec)) {
+        Ray r_out;
+        Vec3d attenuation;
+        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, rec.front_face, attenuation, r_out)) {
+            return attenuation.cwiseProduct(calcRayColor(r_out, bvhRoot, depth - 1, minDistTrace));
+        }
+        return Vec3d(0, 0, 0);
+    }
+
+    Vec3d unit_direction = r.direction().normalized();
+    auto t               = 0.5 * (unit_direction(1) + 1.0);
+    return (1.0 - t) * Vec3d(1.0, 1.0, 1.0) + t * Vec3d(0.5, 0.7, 1.0);
+}
 
 bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world) {
     bool ret = true;
 
     const int image_width  = frame.getWidth();
     const int image_height = frame.getHeight();
+
+    Logger::GetLogger().info("Start building bvh.");
+    BVHNode bvhRoot(world, camera.getT0(), camera.getT1());
+    Logger::GetLogger().info("bvh building done.");
 
     for (int j = image_height - 1; j > -1; --j) {
         Logger::GetLogger().info("Scanlines remaining: {}", j);
@@ -16,7 +41,7 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
             for (int s = 0; s < m_SamplePerPix; ++s) {
                 auto u = (i + randomDouble()) / image_width;
                 auto v = (j + randomDouble()) / image_height;
-                currColor += calcRayColor(camera.getRay(u, v), world, m_MaxRayDepth);
+                currColor += calcRayColor(camera.getRay(u, v), bvhRoot, m_MaxRayDepth, m_MinDistTrace);
             }
 
             currColor      = currColor / m_SamplePerPix;
@@ -29,24 +54,4 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
     Logger::GetLogger().info("Draw frame done!");
 
     return ret;
-}
-
-Vec3d RayTracer::calcRayColor(const Ray &r, const HittableList &world, int depth) {
-    if (depth < 1) {
-        return Vec3d::Zero();
-    }
-
-    HitRecord rec;
-    if (world.hit(r, m_MinDistTrace, INFI, rec)) {
-        Ray r_out;
-        Vec3d attenuation;
-        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, rec.front_face, attenuation, r_out)) {
-            return attenuation.cwiseProduct(calcRayColor(r_out, world, depth - 1));
-        }
-        return Vec3d(0, 0, 0);
-    }
-
-    Vec3d unit_direction = r.direction().normalized();
-    auto t               = 0.5 * (unit_direction(1) + 1.0);
-    return (1.0 - t) * Vec3d(1.0, 1.0, 1.0) + t * Vec3d(0.5, 0.7, 1.0);
 }

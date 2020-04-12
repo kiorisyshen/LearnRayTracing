@@ -14,9 +14,6 @@ class RayTracer {
 
     bool drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world);
 
-   protected:
-    Vec3d calcRayColor(const Ray &r, const HittableList &world, int depth);
-
    private:
     uint32_t m_SamplePerPix = 10;
     uint32_t m_MaxRayDepth  = 20;

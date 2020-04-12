@@ -18,7 +18,18 @@ class HittableList : public IHittable {
         m_Objects.push_back(object);
     }
 
+    const std::vector<std::shared_ptr<IHittable>> &getList() const {
+        return m_Objects;
+    }
+
     virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const;
+
+    virtual bool boundingBox(double t0, double t1, AABB &output_box) const;
+
+    virtual Vec3d getCenter() {
+        // not valid
+        assert(0);
+    }
 
    protected:
     std::vector<std::shared_ptr<IHittable>> m_Objects;
