@@ -11,7 +11,7 @@ class Metal : public IMaterial {
     virtual bool scatter(const Ray &r_in, const Vec3d &p, const Vec3d &normal, bool frontFace, Vec3d &attenuation, Ray &r_out) const {
         Vec3d reflected = reflect(r_in.direction(), normal);
         // r_out           = Ray(p, reflected);
-        r_out       = Ray(p, reflected + m_Fuzz * random_in_unit_sphere());
+        r_out       = Ray(p, reflected + m_Fuzz * random_in_unit_sphere(), r_in.time());
         attenuation = m_Albedo;
         return (r_out.direction().dot(normal) > 0);
     }

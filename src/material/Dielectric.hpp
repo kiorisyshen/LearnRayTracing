@@ -17,7 +17,7 @@ class Dielectric : public IMaterial {
         double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
         if (etai_over_etat * sin_theta > 1.0 || randomDouble() < schlick(cos_theta, etai_over_etat)) {
-            r_out = Ray(p, reflect(r_in.direction(), normal));
+            r_out = Ray(p, reflect(r_in.direction(), normal), r_in.time());
             return true;
         }
 

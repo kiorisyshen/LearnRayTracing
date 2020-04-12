@@ -7,8 +7,8 @@ class Ray {
     Ray() {
     }
 
-    Ray(const Vec3d &origin, const Vec3d &direction)
-        : m_Origin(origin), m_Direction(direction.normalized()) {
+    Ray(const Vec3d &origin, const Vec3d &direction, double time = 0.0)
+        : m_Origin(origin), m_Direction(direction.normalized()), m_Time(time) {
     }
 
     Ray(const Ray &rhs) {
@@ -39,6 +39,9 @@ class Ray {
     const Vec3d &direction() const {
         return m_Direction;
     }
+    double time() const {
+        return m_Time;
+    }
 
     Vec3d at(double t) const {
         return m_Origin + t * m_Direction;
@@ -47,5 +50,6 @@ class Ray {
    private:
     Vec3d m_Origin;
     Vec3d m_Direction;
+    double m_Time;
 };
 }  // namespace LearnRT
