@@ -23,7 +23,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Update submodules
-      run: git submodule update
+      run: |
+        git submodule update --init ThirdParty/eigen
+        git submodule update --init ThirdParty/spdlog
 
     - name: Pre-Checks
       run: |
