@@ -6,11 +6,12 @@ namespace LearnRT {
 // - Util functions for math
 // ------------------------------
 inline double randomDouble() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::random_device rd;
-    static std::mt19937 generator(rd());
+    // static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    // static std::random_device rd;
+    // static std::mt19937 generator(rd());
 
-    return distribution(generator);
+    // return distribution(generator);
+    return rand() / (RAND_MAX + 1.0);
 }
 
 inline double randomDouble(double min, double max) {
