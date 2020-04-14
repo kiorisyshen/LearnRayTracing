@@ -8,6 +8,7 @@
 #include "material/Metal.hpp"
 #include "texture/CheckerTexture.hpp"
 #include "texture/ConstantTexture.hpp"
+#include "texture/NoiseTexture.hpp"
 
 using namespace LearnRT;
 
@@ -64,6 +65,16 @@ HittableList random_scene() {
     return world;
 }
 
+HittableList two_perlin_spheres() {
+    HittableList objects;
+
+    auto pertext = std::make_shared<NoiseTexture>(4);
+    objects.add(std::make_shared<Sphere>(Vec3d(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertext)));
+    objects.add(std::make_shared<Sphere>(Vec3d(0, 2, 0), 2, std::make_shared<Lambertian>(pertext)));
+
+    return objects;
+}
+
 int main() {
     const int image_width  = 12 * 20;
     const int image_height = 8 * 20;
@@ -80,7 +91,8 @@ int main() {
     double aperture    = 0.1;
     Camera cam(PI / 9.0, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
-    HittableList world = random_scene();
+    // HittableList world = random_scene();
+    HittableList world = two_perlin_spheres();
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;

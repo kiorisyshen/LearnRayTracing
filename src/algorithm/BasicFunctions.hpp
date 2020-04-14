@@ -17,6 +17,11 @@ inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
 }
 
+inline int randomInt(int min, int max) {
+    // Returns a random integer in [min,max].
+    return static_cast<int>(randomDouble(min, max + 1));
+}
+
 inline Vec3d randomVec() {
     return Vec3d(randomDouble(), randomDouble(), randomDouble());
 }
@@ -38,6 +43,14 @@ inline Vec3d random_unit_vector() {
     auto z = randomDouble(-1, 1);
     auto r = sqrt(1 - z * z);
     return Vec3d(r * cos(a), r * sin(a), z);
+}
+
+inline Vec3d random_in_unit_disk() {
+    while (true) {
+        auto p = Vec3d(randomDouble(-1, 1), randomDouble(-1, 1), 0);
+        if (p.squaredNorm() >= 1) continue;
+        return p;
+    }
 }
 
 inline double ffmin(double a, double b) {
@@ -71,11 +84,4 @@ inline double schlick(double cosine, double ref_idx) {
     return r0 + (1.0 - r0) * pow((1.0 - cosine), 5.0);
 }
 
-inline Vec3d random_in_unit_disk() {
-    while (true) {
-        auto p = Vec3d(randomDouble(-1, 1), randomDouble(-1, 1), 0);
-        if (p.squaredNorm() >= 1) continue;
-        return p;
-    }
-}
 }  // namespace LearnRT
