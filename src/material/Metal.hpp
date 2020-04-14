@@ -12,7 +12,7 @@ class Metal : public IMaterial {
         Vec3d reflected = reflect(r_in.direction(), rec.normal);
         // r_out           = Ray(p, reflected);
         r_out       = Ray(rec.p, reflected + m_Fuzz * random_in_unit_sphere(), r_in.time());
-        attenuation = m_Texture->pickVelue(rec.u, rec.v, rec.p);
+        attenuation = m_Texture->value(rec.u, rec.v, rec.p);
         return (r_out.direction().dot(rec.normal) > 0);
     }
 

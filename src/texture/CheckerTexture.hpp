@@ -10,12 +10,12 @@ class CheckerTexture : public ITexture {
         : even(t0), odd(t1) {
     }
 
-    virtual Vec3d pickVelue(double u, double v, const Vec3d &p) const {
+    virtual Vec3d value(double u, double v, const Vec3d &p) const {
         auto sines = sin(10 * p.x()) * sin(10 * p.y()) * sin(10 * p.z());
         if (sines < 0) {
-            return odd->pickVelue(u, v, p);
+            return odd->value(u, v, p);
         } else {
-            return even->pickVelue(u, v, p);
+            return even->value(u, v, p);
         }
     }
 

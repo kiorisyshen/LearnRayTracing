@@ -9,7 +9,7 @@ class Dielectric : public IMaterial {
     }
 
     virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
-        attenuation = m_Texture->pickVelue(rec.u, rec.v, rec.p);
+        attenuation = m_Texture->value(rec.u, rec.v, rec.p);
 
         double etai_over_etat = rec.frontFace ? (1.0 / m_Eta) : (m_Eta);
 

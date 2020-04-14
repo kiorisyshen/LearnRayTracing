@@ -10,7 +10,7 @@ class ConstantTexture : public ITexture {
         : m_Color(c) {
     }
 
-    virtual Vec3d pickVelue(double u, double v, const Vec3d &p) const {
+    virtual Vec3d value(double u, double v, const Vec3d &p) const {
         return m_Color;
     }
 
