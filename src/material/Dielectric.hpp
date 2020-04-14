@@ -5,11 +5,11 @@ namespace LearnRT {
 class Dielectric : public IMaterial {
    public:
     Dielectric(double eta, const Vec3d &color = Vec3d(1, 1, 1))
-        : m_Eta(eta), m_Color(color) {
+        : IMaterial(std::make_shared<ConstantTexture>(color)), m_Eta(eta) {
     }
 
     virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
-        attenuation = m_Color;
+        attenuation = m_Texture->pickVelue(rec.u, rec.v, rec.p);
 
         double etai_over_etat = rec.frontFace ? (1.0 / m_Eta) : (m_Eta);
 
@@ -27,7 +27,6 @@ class Dielectric : public IMaterial {
 
    private:
     double m_Eta;
-    Vec3d m_Color;
 };
 
 }  // namespace LearnRT

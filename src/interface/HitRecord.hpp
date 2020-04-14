@@ -8,6 +8,8 @@ struct HitRecord {
     Vec3d p;
     Vec3d normal;
     bool frontFace;
+    double u;
+    double v;
 
     inline void setFaceNormal(const Ray &r, const Vec3d &outward_normal) {
         frontFace = r.direction().dot(outward_normal) < 0;

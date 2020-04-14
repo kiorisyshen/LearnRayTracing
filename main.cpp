@@ -12,7 +12,11 @@ using namespace LearnRT;
 HittableList random_scene() {
     HittableList world;
 
-    world.add(std::make_shared<Sphere>(Vec3d(0, -1000, 0), 1000, std::make_shared<Lambertian>(Vec3d(0.5, 0.5, 0.5))));
+    auto checkerTex = std::make_shared<CheckerTexture>(
+        std::make_shared<ConstantTexture>(Vec3d(0.2, 0.3, 0.1)),
+        std::make_shared<ConstantTexture>(Vec3d(0.9, 0.9, 0.9)));
+
+    world.add(std::make_shared<Sphere>(Vec3d(0, -1000, 0), 1000, std::make_shared<Lambertian>(checkerTex)));
 
     int aMax = 5;
     int bMax = 5;
@@ -25,7 +29,7 @@ HittableList random_scene() {
             if ((center - Vec3d(4, 0.2, 0)).norm() > 0.9) {
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto albedo = randomVec().cwiseProduct(randomVec());
+                    auto albedo = std::make_shared<ConstantTexture>(randomVec().cwiseProduct(randomVec()));
                     if (choose_move < moveThreshold) {
                         world.add(std::make_shared<Sphere>(center, center + Vec3d(0, randomDouble(0, .5), 0), 0.0, 1.0, 0.2, std::make_shared<Lambertian>(albedo)));
                     } else {
@@ -51,7 +55,7 @@ HittableList random_scene() {
 
     world.add(std::make_shared<Sphere>(Vec3d(0, 1, 0), 1.0, std::make_shared<Dielectric>(1.5)));
 
-    world.add(std::make_shared<Sphere>(Vec3d(-4, 1, 0), 1.0, std::make_shared<Lambertian>(Vec3d(0.4, 0.2, 0.1))));
+    world.add(std::make_shared<Sphere>(Vec3d(-4, 1, 0), 1.0, std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.4, 0.2, 0.1)))));
 
     world.add(std::make_shared<Sphere>(Vec3d(4, 1, 0), 1.0, std::make_shared<Metal>(Vec3d(0.7, 0.6, 0.5), 0.0)));
 
