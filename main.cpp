@@ -1,9 +1,11 @@
 #include <iostream>
 #include "Frame.hpp"
 #include "RayTracer.hpp"
+#include "geometry/AARect.hpp"
 #include "geometry/Sphere.hpp"
 #include "io/PPM.hpp"
 #include "material/Dielectric.hpp"
+#include "material/DiffuseLight.hpp"
 #include "material/Lambertian.hpp"
 #include "material/Metal.hpp"
 #include "texture/CheckerTexture.hpp"
@@ -89,6 +91,20 @@ HittableList earth() {
     return HittableList(globe);
 }
 
+HittableList simple_light() {
+    HittableList objects;
+
+    auto pertext = std::make_shared<NoiseTexture>(4);
+    objects.add(std::make_shared<Sphere>(Vec3d(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertext)));
+    objects.add(std::make_shared<Sphere>(Vec3d(0, 2, 0), 2, std::make_shared<Lambertian>(pertext)));
+
+    auto difflight = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(4, 4, 4)));
+    objects.add(std::make_shared<Sphere>(Vec3d(0, 7, 0), 2, difflight));
+    objects.add(std::make_shared<XYRect>(3, 5, 1, 3, -2, difflight));
+
+    return objects;
+}
+
 int main() {
     const int image_width  = 12 * 20;
     const int image_height = 8 * 20;
@@ -96,18 +112,33 @@ int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
     Frame<Eigen::Vector3d> finalImage(image_width, image_height);
-    RayTracer rt(50, 10, 2.0);
+    RayTracer rt(50, 20, 2.0);
 
+    HittableList world;
     Vec3d camPos(13, 2, 3);
     Vec3d lookat(0, 0, 0);
     Vec3d up(0, 1, 0);
     double focusLength = 10.0;
     double aperture    = 0.1;
+
+    {
+        // first 3 scenes
+        // world = random_scene();
+        // world = two_perlin_spheres();
+        // world = earth();
+    }
+
+    {
+        camPos      = Vec3d(26, 3, 6);
+        lookat      = Vec3d(0, 2, 0);
+        up          = Vec3d(0, 1, 0);
+        focusLength = 10.0;
+        aperture    = 0.0;
+        world       = simple_light();
+    }
+
     Camera cam(PI / 9.0, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
-    // HittableList world = random_scene();
-    // HittableList world = two_perlin_spheres();
-    HittableList world = earth();
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;
