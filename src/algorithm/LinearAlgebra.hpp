@@ -36,12 +36,6 @@ class Vec3d {
     double &operator[](int i) {
         return e[i];
     }
-    double operator()(int i) const {
-        return e[i];
-    }
-    double &operator()(int i) {
-        return e[i];
-    }
 
     Vec3d &operator+=(const Vec3d &v) {
         e[0] += v.e[0];

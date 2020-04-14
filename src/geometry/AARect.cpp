@@ -3,7 +3,7 @@
 using namespace LearnRT;
 
 bool AARect::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
-    auto t = (k - r.origin()(m_Axis)) / r.direction()(m_Axis);
+    auto t = (k - r.origin()[m_Axis]) / r.direction()[m_Axis];
     if (t < t_min || t > t_max)
         return false;
 
@@ -11,7 +11,7 @@ bool AARect::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geome
     double y;
     Vec3d p                = r.at(t);
     Vec3d outward_normal   = Vec3d(0, 0, 0);
-    outward_normal(m_Axis) = 1.0;
+    outward_normal[m_Axis] = 1.0;
 
     switch (m_Axis) {
         case 0:

@@ -37,9 +37,9 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
     const int image_width  = frame.getWidth();
     const int image_height = frame.getHeight();
 
-    Logger::GetLogger().info("Start building bvh.");
-    BVHNode bvhRoot(world, camera.getT0(), camera.getT1());
-    Logger::GetLogger().info("bvh building done.");
+    // Logger::GetLogger().info("Start building bvh.");
+    // BVHNode bvhRoot(world, camera.getT0(), camera.getT1());
+    // Logger::GetLogger().info("bvh building done.");
 
     for (int j = image_height - 1; j > -1; --j) {
         Logger::GetLogger().info("Scanlines remaining: {}", j);
@@ -53,9 +53,9 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
             }
 
             currColor      = currColor / m_SamplePerPix;
-            currColor(0)   = pow(currColor(0), m_OneOverGamma);
-            currColor(1)   = pow(currColor(1), m_OneOverGamma);
-            currColor(2)   = pow(currColor(2), m_OneOverGamma);
+            currColor[0]   = pow(currColor[0], m_OneOverGamma);
+            currColor[1]   = pow(currColor[1], m_OneOverGamma);
+            currColor[2]   = pow(currColor[2], m_OneOverGamma);
             frame.at(j, i) = currColor;
         }
     }

@@ -27,7 +27,7 @@ BVHNode::BVHNode(std::vector<std::shared_ptr<IHittable>> &objects,
     }
 
     if (object_span == 2) {
-        if (objects[start]->getCenter()(startAxis) < objects[start + 1]->getCenter()(startAxis)) {
+        if (objects[start]->getCenter()[startAxis] < objects[start + 1]->getCenter()[startAxis]) {
             m_Left  = objects[start];
             m_Right = objects[start + 1];
         } else {
@@ -37,7 +37,7 @@ BVHNode::BVHNode(std::vector<std::shared_ptr<IHittable>> &objects,
     } else {
         std::sort(objects.begin() + start, objects.begin() + end,
                   [axis = startAxis](const std::shared_ptr<IHittable> a, const std::shared_ptr<IHittable> b) -> bool {
-                      return a->getCenter()(axis) < b->getCenter()(axis);
+                      return a->getCenter()[axis] < b->getCenter()[axis];
                   });
         auto mid = start + object_span / 2;
         m_Left   = std::make_shared<BVHNode>(objects, start, mid, time0, time1, (startAxis + 1) % 3);
@@ -94,5 +94,5 @@ bool BVHNode::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geom
     }
 
     rec.valid = hit_left || hit_right;
-    return rec.valid;
+    return hit_left || hit_right;
 }
