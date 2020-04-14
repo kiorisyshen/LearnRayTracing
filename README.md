@@ -10,9 +10,9 @@ A repo to learn ray tracing with https://github.com/RayTracing/raytracing.github
 
 # Run
 ```
-./build/main >> build/test.ppm
+./build/main > build/test.ppm
 ```
 
 # Results
-## Book 1
-![Book1 result](/results/Book1.png)
+- Book 1
+  - ![Book1 result](/results/Book1.png)
