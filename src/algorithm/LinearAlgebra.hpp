@@ -17,6 +17,28 @@ class Vec3d {
         : e{e0, e1, e2} {
     }
 
+    Vec3d(const Vec3d &lhs) {
+        e[0] = lhs.e[0];
+        e[1] = lhs.e[1];
+        e[2] = lhs.e[2];
+    }
+
+    Vec3d(Vec3d &&rhs) {
+        std::move(std::begin(rhs.e), std::end(rhs.e), &e[0]);
+    }
+
+    Vec3d &operator=(const Vec3d &lhs) {
+        e[0] = lhs.e[0];
+        e[1] = lhs.e[1];
+        e[2] = lhs.e[2];
+        return *this;
+    }
+
+    Vec3d &operator=(Vec3d &&rhs) {
+        std::move(std::begin(rhs.e), std::end(rhs.e), &e[0]);
+        return *this;
+    }
+
     double x() const {
         return e[0];
     }
