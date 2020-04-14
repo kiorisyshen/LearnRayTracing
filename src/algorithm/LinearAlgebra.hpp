@@ -64,7 +64,7 @@ class Vec3d {
     }
 
     double dot(const Vec3d &v) const {
-        return e[0] * v.e[0] + e[1] * e[1] + e[2] * v.e[2];
+        return e[0] * v.e[0] + e[1] * v.e[1] + e[2] * v.e[2];
     }
 
     Vec3d cross(const Vec3d &v) const {
