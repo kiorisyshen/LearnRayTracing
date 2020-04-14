@@ -8,7 +8,11 @@
 #include "material/Metal.hpp"
 #include "texture/CheckerTexture.hpp"
 #include "texture/ConstantTexture.hpp"
+#include "texture/ImageTexture.hpp"
 #include "texture/NoiseTexture.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 using namespace LearnRT;
 
@@ -75,6 +79,16 @@ HittableList two_perlin_spheres() {
     return objects;
 }
 
+HittableList earth() {
+    int nx, ny, nn;
+    unsigned char *texture_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+
+    auto earth_surface = std::make_shared<Lambertian>(std::make_shared<ImageTexture>(texture_data, nx, ny));
+    auto globe         = std::make_shared<Sphere>(Vec3d(0, 0, 0), 2, earth_surface);
+
+    return HittableList(globe);
+}
+
 int main() {
     const int image_width  = 12 * 20;
     const int image_height = 8 * 20;
@@ -92,7 +106,8 @@ int main() {
     Camera cam(PI / 9.0, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
     // HittableList world = random_scene();
-    HittableList world = two_perlin_spheres();
+    // HittableList world = two_perlin_spheres();
+    HittableList world = earth();
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;

@@ -2,10 +2,19 @@
 
 using namespace LearnRT;
 
+static void get_sphere_uv(const Vec3d &p, double &u, double &v) {
+    auto phi   = atan2(p.z(), p.x());
+    auto theta = asin(p.y());
+    u          = 1.0 - (phi + PI) / (2.0 * PI);
+    v          = (theta + PI / 2.0) / PI;
+}
+
 bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     rec.valid = false;
 
-    Vec3d co    = center(r.time()) - r.origin();
+    Vec3d currCenter = center(r.time());
+
+    Vec3d co    = currCenter - r.origin();
     Vec3d nd    = r.direction().normalized();
     double dist = co.cross(nd).norm();
 
@@ -24,8 +33,9 @@ bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geome
         rec.valid = true;
         rec.t     = t;
         rec.p     = r.at(t);
-        rec.setFaceNormal(r, (rec.p - center(r.time())).normalized());
+        rec.setFaceNormal(r, (rec.p - currCenter).normalized());
         geom = m_GeomProp;
+        get_sphere_uv((rec.p - currCenter) / m_Radius, rec.u, rec.v);
         return true;
     }
 
