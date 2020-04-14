@@ -2,23 +2,26 @@
 #include "BasicFunctions.hpp"
 
 namespace LearnRT {
-inline double trilinear_interp(double c[2][2][2], double u, double v, double w) {
+inline double perlin_interp(const std::array<std::array<std::array<Vec3d, 2>, 2>, 2> &c, double u, double v, double w) {
+    auto uu    = u * u * (3 - 2 * u);
+    auto vv    = v * v * (3 - 2 * v);
+    auto ww    = w * w * (3 - 2 * w);
     auto accum = 0.0;
+
     for (int i = 0; i < 2; i++)
         for (int j = 0; j < 2; j++)
-            for (int k = 0; k < 2; k++)
-                accum += (i * u + (1 - i) * (1 - u)) *
-                         (j * v + (1 - j) * (1 - v)) *
-                         (k * w + (1 - k) * (1 - w)) * c[i][j][k];
+            for (int k = 0; k < 2; k++) {
+                Vec3d weight_v(u - i, v - j, w - k);
+                accum += (i * uu + (1 - i) * (1 - uu)) * (j * vv + (1 - j) * (1 - vv)) * (k * ww + (1 - k) * (1 - ww)) * c[i][j][k].dot(weight_v);
+            }
 
     return accum;
 }
-
 class Perlin {
    public:
     Perlin() {
         for (int i = 0; i < point_count; ++i) {
-            ranfloat[i] = randomDouble();
+            ranvec[i] = randomVec(-1, 1).normalized();
         }
 
         perm_x = perlin_generate_perm();
@@ -30,28 +33,25 @@ class Perlin {
         auto u = p.x() - floor(p.x());
         auto v = p.y() - floor(p.y());
         auto w = p.z() - floor(p.z());
-        u      = u * u * (3 - 2 * u);
-        v      = v * v * (3 - 2 * v);
-        w      = w * w * (3 - 2 * w);
-
-        int i = floor(p.x());
-        int j = floor(p.y());
-        int k = floor(p.z());
-        double c[2][2][2];
+        int i  = floor(p.x());
+        int j  = floor(p.y());
+        int k  = floor(p.z());
+        // Vec3d c[2][2][2];
+        std::array<std::array<std::array<Vec3d, 2>, 2>, 2> c;
 
         for (int di = 0; di < 2; di++)
             for (int dj = 0; dj < 2; dj++)
                 for (int dk = 0; dk < 2; dk++)
-                    c[di][dj][dk] = ranfloat[perm_x[(i + di) & 255] ^
-                                             perm_y[(j + dj) & 255] ^
-                                             perm_z[(k + dk) & 255]];
+                    c[di][dj][dk] = ranvec[perm_x[(i + di) & 255] ^
+                                           perm_y[(j + dj) & 255] ^
+                                           perm_z[(k + dk) & 255]];
 
-        return trilinear_interp(c, u, v, w);
+        return 0.5 * (1.0 + perlin_interp(c, u, v, w));
     }
 
    private:
     static const int point_count = 256;
-    std::array<double, point_count> ranfloat;
+    std::array<Vec3d, point_count> ranvec;
     std::array<int, point_count> perm_x;
     std::array<int, point_count> perm_y;
     std::array<int, point_count> perm_z;
