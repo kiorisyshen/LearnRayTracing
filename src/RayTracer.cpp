@@ -5,7 +5,7 @@ using namespace LearnRT;
 
 static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable &world, int depth, double minDistTrace) {
     if (depth < 1) {
-        return Vec3d::Zero();
+        return Vec3d(0, 0, 0);
     }
 
     HitRecord rec;
@@ -16,7 +16,7 @@ static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable
         if (geomProp.materialPtr) {
             Vec3d emitted = geomProp.materialPtr->emitted(rec.u, rec.v, rec.p);
             if (geomProp.materialPtr->scatter(r, rec, attenuation, r_out)) {
-                return emitted + attenuation.cwiseProduct(calcRayColor(r_out, background, world, depth - 1, minDistTrace));
+                return emitted + attenuation * (calcRayColor(r_out, background, world, depth - 1, minDistTrace));
             } else {
                 return emitted;
             }
@@ -45,11 +45,11 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
         Logger::GetLogger().info("Scanlines remaining: {}", j);
         for (int i = 0; i < image_width; ++i) {
             Vec3d &currColor = frame.at(j, i);
-            currColor        = Vec3d::Zero();
+            currColor        = Vec3d(0, 0, 0);
             for (int s = 0; s < m_SamplePerPix; ++s) {
                 auto u = (i + randomDouble()) / image_width;
                 auto v = (j + randomDouble()) / image_height;
-                currColor += calcRayColor(camera.getRay(u, v), background, bvhRoot, m_MaxRayDepth, m_MinDistTrace);
+                currColor += calcRayColor(camera.getRay(u, v), background, world, m_MaxRayDepth, m_MinDistTrace);
             }
 
             currColor      = currColor / m_SamplePerPix;

@@ -5,7 +5,7 @@
 namespace LearnRT {
 class Camera {
    public:
-    Camera(const double &fov, const double &aspect, double aperture, double focusLength = 1.0, double t0 = 0.0, double t1 = 0.0, const Vec3d &position = Vec3d(0, 0, 0), const Vec3d &lookAtPt = Vec3d(0, 0 - 1), const Vec3d &up = Vec3d(0, 1, 0))
+    Camera(const double &fov, const double &aspect, double aperture, double focusLength = 1.0, double t0 = 0.0, double t1 = 0.0, const Vec3d &position = Vec3d(0, 0, 0), const Vec3d &lookAtPt = Vec3d(0, 0, -1), const Vec3d &up = Vec3d(0, 1, 0))
         : m_TanHalfFOV(tan(fov / 2.0)), m_Aspect(aspect) {
         _time0 = t0;
         _time1 = t1;

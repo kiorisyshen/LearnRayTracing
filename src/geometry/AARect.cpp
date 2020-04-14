@@ -10,7 +10,7 @@ bool AARect::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geome
     double x;
     double y;
     Vec3d p                = r.at(t);
-    Vec3d outward_normal   = Vec3d::Zero();
+    Vec3d outward_normal   = Vec3d(0, 0, 0);
     outward_normal(m_Axis) = 1.0;
 
     switch (m_Axis) {

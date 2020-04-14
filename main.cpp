@@ -39,7 +39,7 @@ HittableList random_scene() {
             if ((center - Vec3d(4, 0.2, 0)).norm() > 0.9) {
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto albedo = std::make_shared<ConstantTexture>(randomVec().cwiseProduct(randomVec()));
+                    auto albedo = std::make_shared<ConstantTexture>(randomVec() * randomVec());
                     if (choose_move < moveThreshold) {
                         world.add(std::make_shared<Sphere>(center, center + Vec3d(0, randomDouble(0, .5), 0), 0.0, 1.0, 0.2, std::make_shared<Lambertian>(albedo)));
                     } else {
@@ -168,7 +168,7 @@ int main() {
     }
 
     RayTracer rt(50, samplePerPix, 2.0);
-    Frame<Eigen::Vector3d> finalImage(image_width, image_height);
+    Frame<Vec3d> finalImage(image_width, image_height);
     Camera cam(vfov, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
     if (!rt.drawFrame(finalImage, cam, world)) {

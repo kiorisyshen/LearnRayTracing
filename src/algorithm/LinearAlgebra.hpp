@@ -1,7 +1,6 @@
 #pragma once
 #include <functional>
 #include <random>
-#include "Eigen"
 #include "utils/Logger.hpp"
 
 namespace LearnRT {
@@ -9,45 +8,114 @@ static const double EPS  = 1e-7;
 static const double PI   = M_PI;
 static const double INFI = std::numeric_limits<double>::infinity();
 
-// ------------------------------
-// - Base
-// ------------------------------
-template <typename T, int row, int col>
-using Mat = Eigen::Matrix<T, row, col>;
+class Vec3d {
+   public:
+    Vec3d()
+        : e{0, 0, 0} {
+    }
+    Vec3d(double e0, double e1, double e2)
+        : e{e0, e1, e2} {
+    }
 
-// ------------------------------
-// - Vector (Column default)
-// ------------------------------
-using Vec2d = Eigen::Vector2d;
-using Vec3d = Eigen::Vector3d;
-using Vec4d = Eigen::Vector4d;
+    double x() const {
+        return e[0];
+    }
+    double y() const {
+        return e[1];
+    }
+    double z() const {
+        return e[2];
+    }
 
-using Vec2f = Eigen::Vector2f;
-using Vec3f = Eigen::Vector3f;
-using Vec4f = Eigen::Vector4f;
+    Vec3d operator-() const {
+        return Vec3d(-e[0], -e[1], -e[2]);
+    }
+    double operator[](int i) const {
+        return e[i];
+    }
+    double &operator[](int i) {
+        return e[i];
+    }
+    double operator()(int i) const {
+        return e[i];
+    }
+    double &operator()(int i) {
+        return e[i];
+    }
 
-using Vec2i = Eigen::Vector2i;
-using Vec3i = Eigen::Vector3i;
-using Vec4i = Eigen::Vector4i;
+    Vec3d &operator+=(const Vec3d &v) {
+        e[0] += v.e[0];
+        e[1] += v.e[1];
+        e[2] += v.e[2];
+        return *this;
+    }
 
-using VecXd = Eigen::VectorXd;
-using VecXf = Eigen::VectorXf;
-using VecXi = Eigen::VectorXi;
+    Vec3d &operator*=(const double t) {
+        e[0] *= t;
+        e[1] *= t;
+        e[2] *= t;
+        return *this;
+    }
 
-// ------------------------------
-// - Matrix (Column major storage)
-// ------------------------------
-using Mat3x3d = Eigen::Matrix3d;
-using Mat4x4d = Eigen::Matrix4d;
+    Vec3d &operator/=(const double t) {
+        return *this *= 1.0 / t;
+    }
 
-using Mat3x3f = Eigen::Matrix3f;
-using Mat4x4f = Eigen::Matrix4f;
+    double norm() const {
+        return sqrt(squaredNorm());
+    }
 
-using Mat3x3i = Eigen::Matrix3i;
-using Mat4x4i = Eigen::Matrix4i;
+    double squaredNorm() const {
+        return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
 
-using MatXd = Eigen::MatrixXd;
-using MatXf = Eigen::MatrixXf;
-using MatXi = Eigen::MatrixXi;
+    double dot(const Vec3d &v) const {
+        return e[0] * v.e[0] + e[1] * e[1] + e[2] * v.e[2];
+    }
+
+    Vec3d cross(const Vec3d &v) const {
+        return Vec3d(e[1] * v.e[2] - e[2] * v.e[1],
+                     e[2] * v.e[0] - e[0] * v.e[2],
+                     e[0] * v.e[1] - e[1] * v.e[0]);
+    }
+
+    Vec3d normalized() const {
+        double n = norm();
+        return Vec3d(e[0] / n, e[1] / n, e[2] / n);
+    }
+
+   public:
+    double e[3];
+};
+
+// Vec3d Utility Functions
+
+inline std::ostream &operator<<(std::ostream &out, const Vec3d &v) {
+    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+}
+
+inline Vec3d operator+(const Vec3d &u, const Vec3d &v) {
+    return Vec3d(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+}
+
+inline Vec3d operator-(const Vec3d &u, const Vec3d &v) {
+    return Vec3d(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+}
+
+inline Vec3d operator*(const Vec3d &u, const Vec3d &v) {
+    return Vec3d(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+}
+
+inline Vec3d operator*(double t, const Vec3d &v) {
+    return Vec3d(t * v.e[0], t * v.e[1], t * v.e[2]);
+}
+
+inline Vec3d operator*(const Vec3d &v, double t) {
+    return t * v;
+}
+
+inline Vec3d operator/(Vec3d v, double t) {
+    return (1.0 / t) * v;
+}
 
 }  // namespace LearnRT
