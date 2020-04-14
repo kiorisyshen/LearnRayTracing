@@ -22,11 +22,11 @@ class HittableList : public IHittable {
         return m_Objects;
     }
 
-    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const;
 
     virtual bool boundingBox(double t0, double t1, AABB &output_box) const;
 
-    virtual Vec3d getCenter() {
+    virtual Vec3d getCenter() const {
         // not valid
         assert(0);
     }

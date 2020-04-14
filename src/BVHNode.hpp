@@ -18,9 +18,9 @@ class BVHNode : public IHittable {
 
     BVHNode(std::vector<std::shared_ptr<IHittable>> &objects, size_t start, size_t end, double time0, double time1, int startAxis = 0);
 
-    virtual bool hit(const Ray &r, double tmin, double tmax, HitRecord &rec) const;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const;
     virtual bool boundingBox(double t0, double t1, AABB &output_box) const;
-    virtual Vec3d getCenter() {
+    virtual Vec3d getCenter() const {
         return (m_Box->min() + m_Box->max()) / 2.0;
     }
 

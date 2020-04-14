@@ -2,7 +2,7 @@
 
 using namespace LearnRT;
 
-bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const {
+bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     rec.valid = false;
 
     Vec3d co    = center(r.time()) - r.origin();
@@ -25,7 +25,7 @@ bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const
         rec.t     = t;
         rec.p     = r.at(t);
         rec.setFaceNormal(r, (rec.p - center(r.time())).normalized());
-        rec.materialPtr = m_pMaterial;
+        geom = m_GeomProp;
         return true;
     }
 
@@ -44,4 +44,12 @@ bool Sphere::boundingBox(double time0, double time1, AABB &output_box) const {
                           m_Center0 + Vec3d(m_Radius, m_Radius, m_Radius));
     }
     return true;
+}
+
+Vec3d Sphere::getCenter() const {
+    if (!m_Movable) {
+        return m_Center0;
+    }
+
+    return (m_Center0 + m_Center1) / 2.0;
 }

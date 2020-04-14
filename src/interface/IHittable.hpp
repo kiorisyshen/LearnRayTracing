@@ -1,28 +1,19 @@
 #pragma once
 
 #include "AABB.hpp"
-#include "Ray.hpp"
-#include "interface/IMaterial.hpp"
+#include "HitRecord.hpp"
+#include "IMaterial.hpp"
 
 namespace LearnRT {
-struct HitRecord {
-    bool valid;
-    double t;
-    Vec3d p;
-    Vec3d normal;
-    std::shared_ptr<IMaterial> materialPtr;
-    bool front_face;
 
-    inline void setFaceNormal(const Ray &r, const Vec3d &outward_normal) {
-        front_face = r.direction().dot(outward_normal) < 0;
-        normal     = front_face ? outward_normal : -outward_normal;
-    }
+struct GeometryProperty {
+    std::shared_ptr<IMaterial> materialPtr;
 };
 
 class IHittable {
    public:
-    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const = 0;
-    virtual bool boundingBox(double time0, double time1, AABB &output_box) const     = 0;
-    virtual Vec3d getCenter()                                                        = 0;
+    virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const = 0;
+    virtual bool boundingBox(double time0, double time1, AABB &output_box) const                             = 0;
+    virtual Vec3d getCenter() const                                                                          = 0;
 };
 }  // namespace LearnRT

@@ -9,10 +9,11 @@ static Vec3d calcRayColor(const Ray &r, const BVHNode &bvhRoot, int depth, doubl
     }
 
     HitRecord rec;
-    if (bvhRoot.hit(r, minDistTrace, INFI, rec)) {
+    GeometryProperty geomProp;
+    if (bvhRoot.hit(r, minDistTrace, INFI, rec, geomProp)) {
         Ray r_out;
         Vec3d attenuation;
-        if (rec.materialPtr && rec.materialPtr->scatter(r, rec.p, rec.normal, rec.front_face, attenuation, r_out)) {
+        if (geomProp.materialPtr && geomProp.materialPtr->scatter(r, rec, attenuation, r_out)) {
             return attenuation.cwiseProduct(calcRayColor(r_out, bvhRoot, depth - 1, minDistTrace));
         }
         return Vec3d(0, 0, 0);
