@@ -13,7 +13,7 @@ class Camera {
         m_HalfAperture = aperture / 2.0;
 
         double vhalfheight = m_TanHalfFOV;
-        double vhalfwidth  = m_TanHalfFOV * aspect;
+        double vhalfwidth  = m_TanHalfFOV * m_Aspect;
 
         _wVec = (position - lookAtPt).normalized();
         _uVec = up.cross(_wVec).normalized();

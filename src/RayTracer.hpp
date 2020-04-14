@@ -15,8 +15,8 @@ class RayTracer {
     bool drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world, const Vec3d &background = Vec3d(0, 0, 0));
 
    private:
-    uint32_t m_SamplePerPix = 10;
     uint32_t m_MaxRayDepth  = 20;
+    uint32_t m_SamplePerPix = 10;
 
     double m_OneOverGamma = 1.0 / 2.2;
     double m_MinDistTrace = 0.001;

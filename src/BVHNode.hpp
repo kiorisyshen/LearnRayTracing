@@ -5,8 +5,6 @@ namespace LearnRT {
 
 class BVHNode : public IHittable {
    public:
-    BVHNode();
-
     BVHNode(const HittableList &list, double time0, double time1) {
         std::vector<std::shared_ptr<IHittable>> listCopy;
         for (auto &item : list.getList()) {

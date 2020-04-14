@@ -20,7 +20,7 @@ class CheckerTexture : public ITexture {
     }
 
    public:
-    std::shared_ptr<ITexture> odd;
     std::shared_ptr<ITexture> even;
+    std::shared_ptr<ITexture> odd;
 };
 }  // namespace LearnRT

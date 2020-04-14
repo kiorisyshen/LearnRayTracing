@@ -45,8 +45,9 @@ class AARect : public IHittable {
     }
 
    public:
-    GeometryProperty m_GeomProp;
-    double x0, x1, y0, y1, k;
     int m_Axis;
+    double x0, x1, y0, y1, k;
+    GeometryProperty m_GeomProp;
+    
 };
 }  // namespace LearnRT

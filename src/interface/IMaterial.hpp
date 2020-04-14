@@ -9,6 +9,9 @@ class IMaterial {
         : m_Texture(texture) {
     }
 
+    virtual ~IMaterial() {
+    }
+
     virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const = 0;
 
     virtual Vec3d emitted(double u, double v, const Vec3d &p) const {

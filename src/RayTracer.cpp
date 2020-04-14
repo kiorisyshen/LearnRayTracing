@@ -3,20 +3,20 @@
 
 using namespace LearnRT;
 
-static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const BVHNode &bvhRoot, int depth, double minDistTrace) {
+static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable &world, int depth, double minDistTrace) {
     if (depth < 1) {
         return Vec3d::Zero();
     }
 
     HitRecord rec;
     GeometryProperty geomProp;
-    if (bvhRoot.hit(r, minDistTrace, INFI, rec, geomProp)) {
+    if (world.hit(r, minDistTrace, INFI, rec, geomProp)) {
         Ray r_out;
         Vec3d attenuation;
         if (geomProp.materialPtr) {
             Vec3d emitted = geomProp.materialPtr->emitted(rec.u, rec.v, rec.p);
             if (geomProp.materialPtr->scatter(r, rec, attenuation, r_out)) {
-                return attenuation.cwiseProduct(calcRayColor(r_out, background, bvhRoot, depth - 1, minDistTrace));
+                return emitted + attenuation.cwiseProduct(calcRayColor(r_out, background, world, depth - 1, minDistTrace));
             } else {
                 return emitted;
             }
