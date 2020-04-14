@@ -1,5 +1,5 @@
 #pragma once
-#include "interface/IMaterial.hpp"
+#include "texture/ConstantTexture.hpp"
 
 namespace LearnRT {
 class Dielectric : public IMaterial {

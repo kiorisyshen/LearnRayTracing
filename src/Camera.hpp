@@ -1,5 +1,6 @@
 #pragma once
 #include "Ray.hpp"
+#include "algorithm/BasicFunctions.hpp"
 
 namespace LearnRT {
 class Camera {

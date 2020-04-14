@@ -1,6 +1,6 @@
 #pragma once
 #include "Frame.hpp"
-#include "LinearAlgebra.hpp"
+#include "algorithm/BasicFunctions.hpp"
 
 namespace LearnRT {
 class PPM {

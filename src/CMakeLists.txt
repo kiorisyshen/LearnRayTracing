@@ -9,7 +9,6 @@ add_library(RTCore
             Frame.hpp
             HittableList.hpp
             HittableList.cpp
-            LinearAlgebra.hpp
             Ray.hpp
             RayTracer.hpp
             RayTracer.cpp)

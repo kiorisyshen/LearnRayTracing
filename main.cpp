@@ -6,6 +6,8 @@
 #include "material/Dielectric.hpp"
 #include "material/Lambertian.hpp"
 #include "material/Metal.hpp"
+#include "texture/CheckerTexture.hpp"
+#include "texture/ConstantTexture.hpp"
 
 using namespace LearnRT;
 

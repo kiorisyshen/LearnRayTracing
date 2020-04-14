@@ -1,5 +1,5 @@
 #pragma once
-#include "LinearAlgebra.hpp"
+#include "algorithm/LinearAlgebra.hpp"
 
 namespace LearnRT {
 class Ray {
