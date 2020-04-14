@@ -100,7 +100,7 @@ HittableList simple_light() {
 
     auto difflight = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(4, 4, 4)));
     objects.add(std::make_shared<Sphere>(Vec3d(0, 7, 0), 2, difflight));
-    objects.add(std::make_shared<XYRect>(3, 5, 1, 3, -2, difflight));
+    objects.add(std::make_shared<AARect>(2, 3, 5, 1, 3, -2, difflight));
 
     return objects;
 }
