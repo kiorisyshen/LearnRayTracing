@@ -2,6 +2,7 @@
 #include "Frame.hpp"
 #include "RayTracer.hpp"
 #include "geometry/AARect.hpp"
+#include "geometry/FlipFace.hpp"
 #include "geometry/Sphere.hpp"
 #include "io/PPM.hpp"
 #include "material/Dielectric.hpp"
@@ -105,21 +106,37 @@ HittableList simple_light() {
     return objects;
 }
 
-int main() {
-    const int image_width  = 12 * 20;
-    const int image_height = 8 * 20;
+HittableList cornell_box() {
+    HittableList objects;
 
+    auto red   = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.65, 0.05, 0.05)));
+    auto white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.73, 0.73, 0.73)));
+    auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
+    auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(15, 15, 15)));
+
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
+    objects.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<AARect>(1, 213, 343, 227, 332, 554, light));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
+    objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
+    return objects;
+}
+
+int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
-    Frame<Eigen::Vector3d> finalImage(image_width, image_height);
-    RayTracer rt(50, 20, 2.0);
+    int image_width  = 12 * 20;
+    int image_height = 8 * 20;
 
     HittableList world;
     Vec3d camPos(13, 2, 3);
     Vec3d lookat(0, 0, 0);
     Vec3d up(0, 1, 0);
-    double focusLength = 10.0;
-    double aperture    = 0.1;
+    double focusLength    = 10.0;
+    double aperture       = 0.1;
+    double vfov           = PI / 9.0;
+    uint32_t samplePerPix = 10;
 
     {
         // first 3 scenes
@@ -129,15 +146,30 @@ int main() {
     }
 
     {
-        camPos      = Vec3d(26, 3, 6);
-        lookat      = Vec3d(0, 2, 0);
-        up          = Vec3d(0, 1, 0);
-        focusLength = 10.0;
-        aperture    = 0.0;
-        world       = simple_light();
+        // camPos      = Vec3d(26, 3, 6);
+        // lookat      = Vec3d(0, 2, 0);
+        // up          = Vec3d(0, 1, 0);
+        // focusLength = 10.0;
+        // aperture    = 0.0;
+        // world       = simple_light();
     }
 
-    Camera cam(PI / 9.0, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
+    {
+        image_width  = 600;
+        image_height = 600;
+        samplePerPix = 100;
+        camPos       = Vec3d(278, 278, -800);
+        lookat       = Vec3d(278, 278, 0);
+        up           = Vec3d(0, 1, 0);
+        focusLength  = 10.0;
+        aperture     = 0.0;
+        vfov         = PI / 4.5;
+        world        = cornell_box();
+    }
+
+    RayTracer rt(50, samplePerPix, 2.0);
+    Frame<Eigen::Vector3d> finalImage(image_width, image_height);
+    Camera cam(vfov, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
