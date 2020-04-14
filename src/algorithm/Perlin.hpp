@@ -46,7 +46,7 @@ class Perlin {
                                            perm_y[(j + dj) & 255] ^
                                            perm_z[(k + dk) & 255]];
 
-        return 0.5 * (1.0 + perlin_interp(c, u, v, w));
+        return perlin_interp(c, u, v, w);
     }
 
    private:
