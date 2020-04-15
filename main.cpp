@@ -3,6 +3,7 @@
 #include "RayTracer.hpp"
 #include "geometry/AARect.hpp"
 #include "geometry/Box.hpp"
+#include "geometry/ConstantMedium.hpp"
 #include "geometry/Sphere.hpp"
 #include "geometry/Transforms.hpp"
 #include "io/PPM.hpp"
@@ -135,6 +136,35 @@ HittableList cornell_box() {
     return objects;
 }
 
+HittableList cornell_smoke() {
+    HittableList objects;
+
+    auto red   = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.65, 0.05, 0.05)));
+    auto white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.73, 0.73, 0.73)));
+    auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
+    auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(7, 7, 7)));
+
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
+    objects.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<AARect>(1, 113, 443, 127, 432, 554, light));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
+    objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
+
+    std::shared_ptr<IHittable> box1 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 330, 165), white);
+    box1                            = std::make_shared<RotateY>(box1, PI / 12.0);
+    box1                            = std::make_shared<Translate>(box1, Vec3d(265, 0, 295));
+
+    std::shared_ptr<IHittable> box2 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 165, 165), white);
+    box2                            = std::make_shared<RotateY>(box2, -PI / 10.0);
+    box2                            = std::make_shared<Translate>(box2, Vec3d(130, 0, 65));
+
+    objects.add(std::make_shared<ConstantMedium>(box1, 0.01, std::make_shared<ConstantTexture>(Vec3d(0, 0, 0))));
+    objects.add(std::make_shared<ConstantMedium>(box2, 0.01, std::make_shared<ConstantTexture>(Vec3d(1, 1, 1))));
+
+    return objects;
+}
+
 int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
@@ -180,7 +210,8 @@ int main() {
         focusLength  = 10.0;
         aperture     = 0.0;
         vfov         = PI / 4.5;
-        world        = cornell_box();
+        // world        = cornell_box();
+        world = cornell_smoke();
     }
 
     RayTracer rt(50, samplePerPix, 2.0, useBVH);

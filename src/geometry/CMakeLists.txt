@@ -3,5 +3,7 @@ add_library(Geometry
             AARect.cpp
             Box.hpp
             Box.cpp
+            ConstantMedium.hpp
+            ConstantMedium.cpp
             Sphere.hpp
             Sphere.cpp)
