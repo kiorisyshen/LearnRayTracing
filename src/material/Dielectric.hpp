@@ -21,7 +21,7 @@ class Dielectric : public IMaterial {
             return true;
         }
 
-        r_out = Ray(rec.p, refract(r_in.direction(), rec.normal, etai_over_etat));
+        r_out = Ray(rec.p, refract(r_in.direction(), rec.normal, etai_over_etat), r_in.time());
         return true;
     }
 
