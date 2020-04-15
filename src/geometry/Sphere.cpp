@@ -11,29 +11,37 @@ static void get_sphere_uv(const Vec3d &p, double &u, double &v) {
 
 bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     Vec3d currCenter = center(r.time());
+    Vec3d oc         = r.origin() - currCenter;
+    auto a           = r.direction().squaredNorm();
+    auto half_b      = oc.dot(r.direction());
+    auto c           = oc.squaredNorm() - m_Radius * m_Radius;
 
-    Vec3d co    = currCenter - r.origin();
-    Vec3d nd    = r.direction().normalized();
-    double dist = co.cross(nd).norm();
+    auto discriminant = half_b * half_b - a * c;
 
-    if (dist < m_Radius) {
-        double dt = sqrt(m_Radius * m_Radius - dist * dist);
-        double t  = co.dot(nd) - dt;
-        double t2 = t + dt + dt;
+    if (discriminant > 0) {
+        auto root = sqrt(discriminant);
 
-        if (t < t_min || t > t_max) {
-            if (t2 < t_min || t2 > t_max) {
-                return false;
-            }
-            t = t2;
+        auto temp = (-half_b - root) / a;
+        if (temp < t_max && temp > t_min) {
+            rec.t                = temp;
+            rec.p                = r.at(rec.t);
+            Vec3d outward_normal = (rec.p - currCenter) / m_Radius;
+            rec.setFaceNormal(r, outward_normal);
+            geom = m_GeomProp;
+            get_sphere_uv((rec.p - currCenter) / m_Radius, rec.u, rec.v);
+            return true;
         }
 
-        rec.t = t;
-        rec.p = r.at(t);
-        rec.setFaceNormal(r, (rec.p - currCenter).normalized());
-        geom = m_GeomProp;
-        get_sphere_uv((rec.p - currCenter) / m_Radius, rec.u, rec.v);
-        return true;
+        temp = (-half_b + root) / a;
+        if (temp < t_max && temp > t_min) {
+            rec.t                = temp;
+            rec.p                = r.at(rec.t);
+            Vec3d outward_normal = (rec.p - currCenter) / m_Radius;
+            rec.setFaceNormal(r, outward_normal);
+            geom = m_GeomProp;
+            get_sphere_uv((rec.p - currCenter) / m_Radius, rec.u, rec.v);
+            return true;
+        }
     }
 
     return false;
