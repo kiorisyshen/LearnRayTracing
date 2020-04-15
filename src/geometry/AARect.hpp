@@ -42,12 +42,12 @@ class AARect : public IHittable {
             default:
                 assert(0);
         }
+        return Vec3d();
     }
 
    public:
     int m_Axis;
     double x0, x1, y0, y1, k;
     GeometryProperty m_GeomProp;
-    
 };
 }  // namespace LearnRT

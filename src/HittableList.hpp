@@ -29,6 +29,7 @@ class HittableList : public IHittable {
     virtual Vec3d getCenter() const {
         // not valid
         assert(0);
+        return Vec3d();
     }
 
    protected:
