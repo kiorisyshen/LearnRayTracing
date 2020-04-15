@@ -290,27 +290,30 @@ HittableList final_scene() {
 int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
-    int image_width  = 12 * 20;
-    int image_height = 8 * 20;
+    int image_width  = 600;
+    int image_height = 600;
 
     HittableList world;
+    Vec3d background(0, 0, 0);
     Vec3d camPos(13, 2, 3);
     Vec3d lookat(0, 0, 0);
     Vec3d up(0, 1, 0);
     double focusLength    = 10.0;
     double aperture       = 0.1;
     double vfov           = PI / 9.0;
-    uint32_t samplePerPix = 10;
+    uint32_t samplePerPix = 100;
     bool useBVHAll        = false;
 
     {
-        // world = random_scene();
-        // useBVHAll = true;
+        world      = random_scene();
+        background = Vec3d(0.70, 0.80, 1.00);
+        useBVHAll  = true;
     }
 
     {
         // world = two_perlin_spheres();
         // world = earth();
+        // background = Vec3d(0.70, 0.80, 1.00);
     }
 
     {
@@ -320,6 +323,7 @@ int main() {
         // focusLength = 10.0;
         // aperture    = 0.0;
         // world       = simple_light();
+        // background = Vec3d(0.70, 0.80, 1.00);
     }
 
     {
@@ -339,16 +343,16 @@ int main() {
     }
 
     {
-        image_width  = 600;
-        image_height = 600;
-        samplePerPix = 100;
-        camPos       = Vec3d(478, 278, -600);
-        lookat       = Vec3d(278, 278, 0);
-        up           = Vec3d(0, 1, 0);
-        focusLength  = 10.0;
-        aperture     = 0.0;
-        vfov         = PI / 4.5;
-        world        = final_scene();
+        // image_width  = 600;
+        // image_height = 600;
+        // samplePerPix = 100;
+        // camPos       = Vec3d(478, 278, -600);
+        // lookat       = Vec3d(278, 278, 0);
+        // up           = Vec3d(0, 1, 0);
+        // focusLength  = 10.0;
+        // aperture     = 0.0;
+        // vfov         = PI / 4.5;
+        // world        = final_scene();
     }
 
     RayTracer rt(50, samplePerPix, 2.0, useBVHAll);
@@ -356,7 +360,7 @@ int main() {
     Camera cam(vfov, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
     auto T_Start = std::chrono::system_clock::now();
-    if (!rt.drawFrame(finalImage, cam, world)) {
+    if (!rt.drawFrame(finalImage, cam, world, background)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;
     }
