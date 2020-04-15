@@ -4,13 +4,15 @@ using namespace LearnRT;
 
 bool HittableList::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     HitRecord temp_rec;
+    GeometryProperty temp_geom;
     bool ret            = false;
     auto closest_so_far = t_max;
 
     for (const auto &object : m_Objects) {
-        if (object->hit(r, t_min, closest_so_far, temp_rec, geom)) {
+        if (object->hit(r, t_min, closest_so_far, temp_rec, temp_geom)) {
             closest_so_far = temp_rec.t;
             rec            = temp_rec;
+            geom           = temp_geom;
             ret            = true;
         }
     }
