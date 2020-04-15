@@ -142,10 +142,14 @@ int main() {
     double aperture       = 0.1;
     double vfov           = PI / 9.0;
     uint32_t samplePerPix = 10;
+    bool useBVH           = false;
 
     {
-        // first 3 scenes
         // world = random_scene();
+        // useBVH = true;
+    }
+
+    {
         // world = two_perlin_spheres();
         // world = earth();
     }
@@ -172,14 +176,18 @@ int main() {
         world        = cornell_box();
     }
 
-    RayTracer rt(50, samplePerPix, 2.0);
+    RayTracer rt(50, samplePerPix, 2.0, useBVH);
     Frame<Vec3d> finalImage(image_width, image_height);
     Camera cam(vfov, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
+    auto T_Start = std::chrono::system_clock::now();
     if (!rt.drawFrame(finalImage, cam, world)) {
         Logger::GetLogger().error("Failed to draw frame!");
         return -1;
     }
+    auto T_End     = std::chrono::system_clock::now();
+    double T_Total = std::chrono::duration<double>(T_End - T_Start).count();
+    Logger::GetLogger().info("Total render time: {}", T_Total);
 
     PPM::OutFrame2Stream(finalImage, std::cout);
     return 0;

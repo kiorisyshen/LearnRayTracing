@@ -37,9 +37,12 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
     const int image_width  = frame.getWidth();
     const int image_height = frame.getHeight();
 
-    // Logger::GetLogger().info("Start building bvh.");
-    // BVHNode bvhRoot(world, camera.getT0(), camera.getT1());
-    // Logger::GetLogger().info("bvh building done.");
+    std::shared_ptr<BVHNode> bvhRoot;
+    if (m_UseBVH) {
+        Logger::GetLogger().info("Start building bvh.");
+        bvhRoot = std::make_shared<BVHNode>(world, camera.getT0(), camera.getT1());
+        Logger::GetLogger().info("bvh building done.");
+    }
 
     for (int j = image_height - 1; j > -1; --j) {
         Logger::GetLogger().info("Scanlines remaining: {}", j);
@@ -49,6 +52,10 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
             for (int s = 0; s < m_SamplePerPix; ++s) {
                 auto u = (i + randomDouble()) / image_width;
                 auto v = (j + randomDouble()) / image_height;
+                if (m_UseBVH) {
+                    currColor += calcRayColor(camera.getRay(u, v), background, *bvhRoot, m_MaxRayDepth, m_MinDistTrace);
+                    continue;
+                }
                 currColor += calcRayColor(camera.getRay(u, v), background, world, m_MaxRayDepth, m_MinDistTrace);
             }
 
