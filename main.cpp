@@ -323,32 +323,32 @@ int main() {
     }
 
     {
-        image_width  = 600;
-        image_height = 600;
-        samplePerPix = 100;
-        camPos       = Vec3d(278, 278, -800);
-        lookat       = Vec3d(278, 278, 0);
-        up           = Vec3d(0, 1, 0);
-        focusLength  = 10.0;
-        aperture     = 0.0;
-        vfov         = PI / 4.5;
-        // world        = cornell_box();
-        // world = cornell_smoke();
-        // world = cornell_balls();
-        world = cornell_final();
-    }
-
-    {
         // image_width  = 600;
         // image_height = 600;
         // samplePerPix = 100;
-        // camPos       = Vec3d(478, 278, -800);
+        // camPos       = Vec3d(278, 278, -800);
         // lookat       = Vec3d(278, 278, 0);
         // up           = Vec3d(0, 1, 0);
         // focusLength  = 10.0;
         // aperture     = 0.0;
         // vfov         = PI / 4.5;
-        // world        = final_scene();
+        // world        = cornell_box();
+        // world = cornell_smoke();
+        // world = cornell_balls();
+        // world = cornell_final();
+    }
+
+    {
+        image_width  = 600;
+        image_height = 600;
+        samplePerPix = 100;
+        camPos       = Vec3d(478, 278, -600);
+        lookat       = Vec3d(278, 278, 0);
+        up           = Vec3d(0, 1, 0);
+        focusLength  = 10.0;
+        aperture     = 0.0;
+        vfov         = PI / 4.5;
+        world        = final_scene();
     }
 
     RayTracer rt(50, samplePerPix, 2.0, useBVHAll);
