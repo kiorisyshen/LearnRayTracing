@@ -3,7 +3,6 @@
 
 namespace LearnRT {
 struct HitRecord {
-    bool valid;
     double t;
     Vec3d p;
     Vec3d normal;

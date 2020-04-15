@@ -6,7 +6,7 @@ namespace LearnRT {
 class ConstantMedium : public IHittable {
    public:
     ConstantMedium(std::shared_ptr<IHittable> b, double d, std::shared_ptr<ITexture> a)
-        : boundary(b), neg_inv_density(-1 / d) {
+        : boundary(b), neg_inv_density(-1.0 / d) {
         phase_function = std::make_shared<Isotropic>(a);
     }
 

@@ -10,8 +10,6 @@ static void get_sphere_uv(const Vec3d &p, double &u, double &v) {
 }
 
 bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
-    rec.valid = false;
-
     Vec3d currCenter = center(r.time());
 
     Vec3d co    = currCenter - r.origin();
@@ -30,9 +28,8 @@ bool Sphere::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geome
             t = t2;
         }
 
-        rec.valid = true;
-        rec.t     = t;
-        rec.p     = r.at(t);
+        rec.t = t;
+        rec.p = r.at(t);
         rec.setFaceNormal(r, (rec.p - currCenter).normalized());
         geom = m_GeomProp;
         get_sphere_uv((rec.p - currCenter) / m_Radius, rec.u, rec.v);

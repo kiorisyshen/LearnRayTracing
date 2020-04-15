@@ -34,7 +34,7 @@ inline Vec3d randomVec(double min, double max) {
 inline Vec3d random_in_unit_sphere() {
     while (true) {
         auto p = randomVec(-1, 1);
-        if (p.norm() >= 1) continue;
+        if (p.squaredNorm() >= 1) continue;
         return p;
     }
 }

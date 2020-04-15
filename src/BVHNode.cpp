@@ -79,7 +79,6 @@ bool BVHNode::boundingBox(double t0, double t1, AABB &output_box) const {
 
 bool BVHNode::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     if (!m_Box || !m_Box->hit(r, t_min, t_max)) {
-        rec.valid = false;
         return false;
     }
 
@@ -93,6 +92,5 @@ bool BVHNode::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geom
         hit_right = m_Right->hit(r, t_min, hit_left ? rec.t : t_max, rec, geom);
     }
 
-    rec.valid = hit_left || hit_right;
     return hit_left || hit_right;
 }
