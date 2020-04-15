@@ -122,8 +122,15 @@ HittableList cornell_box() {
     objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
     objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
 
-    objects.add(std::make_shared<Box>(Vec3d(130, 0, 65), Vec3d(295, 165, 230), white));
-    objects.add(std::make_shared<Box>(Vec3d(265, 0, 295), Vec3d(430, 330, 460), white));
+    std::shared_ptr<IHittable> box1 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 330, 165), white);
+    box1                            = std::make_shared<RotateY>(box1, PI / 12.0);
+    box1                            = std::make_shared<Translate>(box1, Vec3d(265, 0, 295));
+    objects.add(box1);
+
+    std::shared_ptr<IHittable> box2 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 165, 165), white);
+    box2                            = std::make_shared<RotateY>(box2, -PI / 10.0);
+    box2                            = std::make_shared<Translate>(box2, Vec3d(130, 0, 65));
+    objects.add(box2);
 
     return objects;
 }
