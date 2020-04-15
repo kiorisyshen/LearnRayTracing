@@ -12,7 +12,6 @@ bool HittableList::hit(const Ray &r, double t_min, double t_max, HitRecord &rec,
             closest_so_far = temp_rec.t;
             rec            = temp_rec;
             ret            = true;
-            break;
         }
     }
 

@@ -2,6 +2,7 @@
 #include "Frame.hpp"
 #include "RayTracer.hpp"
 #include "geometry/AARect.hpp"
+#include "geometry/Box.hpp"
 #include "geometry/FlipFace.hpp"
 #include "geometry/Sphere.hpp"
 #include "io/PPM.hpp"
@@ -120,6 +121,10 @@ HittableList cornell_box() {
     objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
     objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
     objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
+
+    objects.add(std::make_shared<Box>(Vec3d(130, 0, 65), Vec3d(295, 165, 230), white));
+    objects.add(std::make_shared<Box>(Vec3d(265, 0, 295), Vec3d(430, 330, 460), white));
+
     return objects;
 }
 
