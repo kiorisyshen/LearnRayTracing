@@ -305,25 +305,32 @@ int main() {
     bool useBVHAll        = false;
 
     {
-        world      = random_scene();
-        background = Vec3d(0.70, 0.80, 1.00);
-        useBVHAll  = true;
+        // world      = random_scene();
+        // background = Vec3d(0.70, 0.80, 1.00);
+        // useBVHAll  = true;
     }
 
     {
-        // world = two_perlin_spheres();
-        // world = earth();
+        // image_width  = 12 * 50;
+        // image_height = 8 * 50;
+        // world        = two_perlin_spheres();
+        // background   = Vec3d(0.70, 0.80, 1.00);
+    }
+
+    {
+        // world      = earth();
         // background = Vec3d(0.70, 0.80, 1.00);
     }
 
     {
-        // camPos      = Vec3d(26, 3, 6);
-        // lookat      = Vec3d(0, 2, 0);
-        // up          = Vec3d(0, 1, 0);
-        // focusLength = 10.0;
-        // aperture    = 0.0;
-        // world       = simple_light();
-        // background = Vec3d(0.70, 0.80, 1.00);
+        // image_width  = 12 * 50;
+        // image_height = 8 * 50;
+        // camPos       = Vec3d(26, 3, 6);
+        // lookat       = Vec3d(0, 2, 0);
+        // up           = Vec3d(0, 1, 0);
+        // focusLength  = 10.0;
+        // aperture     = 0.0;
+        // world        = simple_light();
     }
 
     {
@@ -343,16 +350,16 @@ int main() {
     }
 
     {
-        // image_width  = 600;
-        // image_height = 600;
-        // samplePerPix = 100;
-        // camPos       = Vec3d(478, 278, -600);
-        // lookat       = Vec3d(278, 278, 0);
-        // up           = Vec3d(0, 1, 0);
-        // focusLength  = 10.0;
-        // aperture     = 0.0;
-        // vfov         = PI / 4.5;
-        // world        = final_scene();
+        image_width  = 600;
+        image_height = 600;
+        samplePerPix = 100;
+        camPos       = Vec3d(478, 278, -600);
+        lookat       = Vec3d(278, 278, 0);
+        up           = Vec3d(0, 1, 0);
+        focusLength  = 10.0;
+        aperture     = 0.0;
+        vfov         = PI / 4.5;
+        world        = final_scene();
     }
 
     RayTracer rt(50, samplePerPix, 2.0, useBVHAll);
