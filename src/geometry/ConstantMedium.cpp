@@ -8,11 +8,12 @@ static const bool debugging   = enableDebug && randomDouble() < 0.00001;
 
 bool ConstantMedium::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, GeometryProperty &geom) const {
     HitRecord rec1, rec2;
+    GeometryProperty tmp;
 
-    if (!boundary->hit(r, -INFI, INFI, rec1, geom))
+    if (!boundary->hit(r, -INFI, INFI, rec1, tmp))
         return false;
 
-    if (!boundary->hit(r, rec1.t + 0.0001, INFI, rec2, geom))
+    if (!boundary->hit(r, rec1.t + 0.0001, INFI, rec2, tmp))
         return false;
 
     if (debugging) {

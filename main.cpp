@@ -333,9 +333,9 @@ int main() {
         aperture     = 0.0;
         vfov         = PI / 4.5;
         // world        = cornell_box();
-        world = cornell_smoke();
-        // world        = cornell_balls();
-        // world = cornell_final();
+        // world = cornell_smoke();
+        // world = cornell_balls();
+        world = cornell_final();
     }
 
     {
@@ -348,7 +348,7 @@ int main() {
         // focusLength  = 10.0;
         // aperture     = 0.0;
         // vfov         = PI / 4.5;
-        // world        = cornell_smoke();
+        // world        = final_scene();
     }
 
     RayTracer rt(50, samplePerPix, 2.0, useBVHAll);
