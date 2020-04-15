@@ -1,4 +1,5 @@
 #include <iostream>
+#include "BVHNode.hpp"
 #include "Frame.hpp"
 #include "RayTracer.hpp"
 #include "geometry/AARect.hpp"
@@ -136,6 +137,33 @@ HittableList cornell_box() {
     return objects;
 }
 
+HittableList cornell_balls() {
+    HittableList objects;
+
+    auto red   = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.65, 0.05, 0.05)));
+    auto white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.73, 0.73, 0.73)));
+    auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
+    auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(5, 5, 5)));
+
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
+    objects.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<AARect>(1, 113, 443, 127, 432, 554, light));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
+    objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
+
+    auto boundary = std::make_shared<Sphere>(Vec3d(160, 100, 145), 100, std::make_shared<Dielectric>(1.5));
+    objects.add(boundary);
+    objects.add(std::make_shared<ConstantMedium>(boundary, 0.1, std::make_shared<ConstantTexture>(Vec3d(1.0, 1.0, 1.0))));
+
+    std::shared_ptr<IHittable> box1 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 330, 165), white);
+    box1                            = std::make_shared<RotateY>(box1, PI / 12.0);
+    box1                            = std::make_shared<Translate>(box1, Vec3d(265, 0, 295));
+    objects.add(box1);
+
+    return objects;
+}
+
 HittableList cornell_smoke() {
     HittableList objects;
 
@@ -165,6 +193,100 @@ HittableList cornell_smoke() {
     return objects;
 }
 
+HittableList cornell_final() {
+    HittableList objects;
+
+    auto pertext = std::make_shared<NoiseTexture>(0.1);
+
+    int nx, ny, nn;
+    unsigned char *tex_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+
+    auto mat = std::make_shared<Lambertian>(std::make_shared<ImageTexture>(tex_data, nx, ny));
+
+    auto red   = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.65, 0.05, 0.05)));
+    auto white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.73, 0.73, 0.73)));
+    auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
+    auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(7, 7, 7)));
+
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
+    objects.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<AARect>(1, 123, 423, 147, 412, 554, light));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
+    objects.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
+
+    std::shared_ptr<IHittable> boundary2 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 165, 165), std::make_shared<Dielectric>(1.5));
+    boundary2                            = std::make_shared<RotateY>(boundary2, -PI / 10.0);
+    boundary2                            = std::make_shared<Translate>(boundary2, Vec3d(130, 0, 65));
+
+    auto tex = std::make_shared<ConstantTexture>(Vec3d(0.9, 0.9, 0.9));
+
+    objects.add(boundary2);
+    objects.add(std::make_shared<ConstantMedium>(boundary2, 0.2, tex));
+
+    return objects;
+}
+
+HittableList final_scene() {
+    HittableList boxes1;
+    auto ground = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.48, 0.83, 0.53)));
+
+    const int boxes_per_side = 20;
+    for (int i = 0; i < boxes_per_side; i++) {
+        for (int j = 0; j < boxes_per_side; j++) {
+            auto w  = 100.0;
+            auto x0 = -1000.0 + i * w;
+            auto z0 = -1000.0 + j * w;
+            auto y0 = 0.0;
+            auto x1 = x0 + w;
+            auto y1 = randomDouble(1, 101);
+            auto z1 = z0 + w;
+
+            boxes1.add(std::make_shared<Box>(Vec3d(x0, y0, z0), Vec3d(x1, y1, z1), ground));
+        }
+    }
+
+    HittableList objects;
+
+    objects.add(std::make_shared<BVHNode>(boxes1, 0, 1));
+
+    auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(7, 7, 7)));
+    objects.add(std::make_shared<AARect>(1, 123, 423, 147, 412, 554, light));
+
+    auto center1 = Vec3d(400, 400, 200);
+    auto center2 = center1 + Vec3d(30, 0, 0);
+
+    auto moving_sphere_material = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.7, 0.3, 0.1)));
+    objects.add(std::make_shared<Sphere>(center1, center2, 0, 1, 50, moving_sphere_material));
+
+    objects.add(std::make_shared<Sphere>(Vec3d(260, 150, 45), 50, std::make_shared<Dielectric>(1.5)));
+    objects.add(std::make_shared<Sphere>(Vec3d(0, 150, 145), 50, std::make_shared<Metal>(Vec3d(0.8, 0.8, 0.9), 10.0)));
+
+    auto boundary = std::make_shared<Sphere>(Vec3d(360, 150, 145), 70, std::make_shared<Dielectric>(1.5));
+    objects.add(boundary);
+    objects.add(std::make_shared<ConstantMedium>(boundary, 0.2, std::make_shared<ConstantTexture>(Vec3d(0.2, 0.4, 0.9))));
+    boundary = std::make_shared<Sphere>(Vec3d(0, 0, 0), 5000, std::make_shared<Dielectric>(1.5));
+    objects.add(std::make_shared<ConstantMedium>(boundary, .0001, std::make_shared<ConstantTexture>(Vec3d(1, 1, 1))));
+
+    int nx, ny, nn;
+    auto tex_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+    auto emat     = std::make_shared<Lambertian>(std::make_shared<ImageTexture>(tex_data, nx, ny));
+    objects.add(std::make_shared<Sphere>(Vec3d(400, 200, 400), 100, emat));
+    auto pertext = std::make_shared<NoiseTexture>(0.1);
+    objects.add(std::make_shared<Sphere>(Vec3d(220, 280, 300), 80, std::make_shared<Lambertian>(pertext)));
+
+    HittableList boxes2;
+    auto white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.73, 0.73, 0.73)));
+    int ns     = 1000;
+    for (int j = 0; j < ns; j++) {
+        boxes2.add(std::make_shared<Sphere>(randomVec(0, 165), 10, white));
+    }
+
+    objects.add(std::make_shared<Translate>(std::make_shared<RotateY>(std::make_shared<BVHNode>(boxes2, 0.0, 1.0), PI / 12.0), Vec3d(-100, 270, 395)));
+
+    return objects;
+}
+
 int main() {
     Logger::AddCerrSink("Main", spdlog::level::trace);
 
@@ -179,11 +301,11 @@ int main() {
     double aperture       = 0.1;
     double vfov           = PI / 9.0;
     uint32_t samplePerPix = 10;
-    bool useBVH           = false;
+    bool useBVHAll        = false;
 
     {
         // world = random_scene();
-        // useBVH = true;
+        // useBVHAll = true;
     }
 
     {
@@ -212,9 +334,24 @@ int main() {
         vfov         = PI / 4.5;
         // world        = cornell_box();
         world = cornell_smoke();
+        // world        = cornell_balls();
+        // world = cornell_final();
     }
 
-    RayTracer rt(50, samplePerPix, 2.0, useBVH);
+    {
+        // image_width  = 600;
+        // image_height = 600;
+        // samplePerPix = 100;
+        // camPos       = Vec3d(478, 278, -800);
+        // lookat       = Vec3d(278, 278, 0);
+        // up           = Vec3d(0, 1, 0);
+        // focusLength  = 10.0;
+        // aperture     = 0.0;
+        // vfov         = PI / 4.5;
+        // world        = cornell_smoke();
+    }
+
+    RayTracer rt(50, samplePerPix, 2.0, useBVHAll);
     Frame<Vec3d> finalImage(image_width, image_height);
     Camera cam(vfov, double(image_width) / double(image_height), aperture, focusLength, 0.0, 1.0, camPos, lookat, up);
 
