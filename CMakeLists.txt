@@ -13,3 +13,5 @@ add_subdirectory(src)
 
 add_executable(main main.cpp)
 target_link_libraries(main Utils Geometry RTCore)
+
+add_executable(testMC testMC.cpp)
