@@ -15,7 +15,7 @@ class NoiseTexture : public ITexture {
         // return Vec3d(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale * p));
         // return Vec3d(1, 1, 1) * noise.turb(scale * p);
         // return Vec3d(1, 1, 1) * 0.5 * (1.0 + sin(scale * p.z() + 10.0 * noise.turb(p)));
-        return Vec3d(1, 1, 1) * 0.5 * (1.0 + sin(scale * p.z() + 10.0 * noise.turb(scale * p)));
+        return Vec3d(1, 1, 1) * 0.5 * (1.0 + sin(scale * p.x() + 10.0 * noise.turb(scale * p)));
     }
 
    public:
