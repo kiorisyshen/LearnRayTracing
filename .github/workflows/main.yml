@@ -22,16 +22,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Update submodules
-      run: |
-        git submodule update --init ThirdParty/eigen
-        git submodule update --init ThirdParty/spdlog
-
-    - name: Pre-Checks
-      run: |
-        cmake --version
-        ls ThirdParty/eigen
-
     # Runs a single command using the runners shell
     - name: Test Build
       run: ./build.sh
