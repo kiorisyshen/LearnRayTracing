@@ -8,17 +8,14 @@ class Lambertian : public IMaterial {
         : IMaterial(texture) {
     }
 
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
-        Vec3d scatter_direction = random_in_hemisphere(rec.normal);
-        r_out                   = Ray(rec.p, scatter_direction, r_in.time());
-        attenuation             = m_Texture->value(rec.u, rec.v, rec.p);
-        return true;
-    }
-
     virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &albedo, Ray &r_out, double &pdf) const {
-        bool ret = scatter(r_in, rec, albedo, r_out);
-        pdf      = 0.5 / PI;
-        return ret;
+        ONB uvw;
+        uvw.build_from_w(rec.normal);
+        Vec3d direction = uvw.local(random_cosine_direction());
+        r_out           = Ray(rec.p, direction, r_in.time());
+        albedo          = m_Texture->value(rec.u, rec.v, rec.p);
+        pdf             = uvw.w().dot(r_out.direction()) / PI;
+        return true;
     }
 
     virtual double scattering_pdf(const Ray &r_in, const HitRecord &rec, const Ray &r_out) const {

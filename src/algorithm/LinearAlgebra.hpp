@@ -134,4 +134,42 @@ inline Vec3d operator/(Vec3d v, double t) {
     return (1.0 / t) * v;
 }
 
+class ONB {
+   public:
+    ONB() {
+    }
+
+    inline Vec3d operator[](int i) const {
+        return axis[i];
+    }
+
+    Vec3d u() const {
+        return axis[0];
+    }
+    Vec3d v() const {
+        return axis[1];
+    }
+    Vec3d w() const {
+        return axis[2];
+    }
+
+    Vec3d local(double a, double b, double c) const {
+        return a * u() + b * v() + c * w();
+    }
+
+    Vec3d local(const Vec3d &a) const {
+        return a.x() * u() + a.y() * v() + a.z() * w();
+    }
+
+    void build_from_w(const Vec3d &n) {
+        axis[2] = n.normalized();
+        Vec3d a = (fabs(w().x()) > 0.9) ? Vec3d(0, 1, 0) : Vec3d(1, 0, 0);
+        axis[1] = w().cross(a).normalized();
+        axis[0] = w().cross(v());
+    }
+
+   public:
+    Vec3d axis[3];
+};
+
 }  // namespace LearnRT

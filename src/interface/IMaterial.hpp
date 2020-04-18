@@ -26,7 +26,9 @@ class IMaterial {
     }
 
    protected:
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const = 0;
+    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
+        return false;
+    }
 
    protected:
     std::shared_ptr<ITexture> m_Texture;

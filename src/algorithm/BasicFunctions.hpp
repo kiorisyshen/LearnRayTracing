@@ -54,6 +54,18 @@ inline Vec3d random_in_hemisphere(const Vec3d &normal) {
         return -in_unit_sphere;
 }
 
+inline Vec3d random_cosine_direction() {
+    auto r1 = randomDouble();
+    auto r2 = randomDouble();
+    auto z  = sqrt(1 - r2);
+
+    auto phi = 2 * PI * r1;
+    auto x   = cos(phi) * sqrt(r2);
+    auto y   = sin(phi) * sqrt(r2);
+
+    return Vec3d(x, y, z);
+}
+
 inline Vec3d random_in_unit_disk() {
     while (true) {
         auto p = Vec3d(randomDouble(-1, 1), randomDouble(-1, 1), 0);
