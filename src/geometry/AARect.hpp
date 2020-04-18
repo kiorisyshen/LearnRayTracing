@@ -45,9 +45,9 @@ class AARect : public IHittable {
         return Vec3d();
     }
 
-    virtual double pdf_value(const Vec3d &origin, const Vec3d &v, double t = 0.0) const;
+    virtual double pdf_value(const Vec3d &origin, const Vec3d &v) const;
 
-    virtual Vec3d random(const Vec3d &origin, double t = 0.0) const;
+    virtual Vec3d random(const Vec3d &origin) const;
 
    public:
     int m_Axis;

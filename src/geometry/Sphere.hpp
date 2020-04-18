@@ -20,9 +20,9 @@ class Sphere : public IHittable {
 
     virtual Vec3d getCenter() const;
 
-    virtual double pdf_value(const Vec3d &o, const Vec3d &v, double t = 0.0) const;
+    virtual double pdf_value(const Vec3d &o, const Vec3d &v) const;
 
-    virtual Vec3d random(const Vec3d &o, double t = 0.0) const;
+    virtual Vec3d random(const Vec3d &o) const;
 
    private:
     Vec3d center(double time) const {

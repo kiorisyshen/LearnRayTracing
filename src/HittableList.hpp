@@ -32,6 +32,21 @@ class HittableList : public IHittable {
         return Vec3d();
     }
 
+    virtual double pdf_value(const Vec3d &o, const Vec3d &v) const {
+        auto weight = 1.0 / m_Objects.size();
+        auto sum    = 0.0;
+
+        for (const auto &object : m_Objects)
+            sum += weight * object->pdf_value(o, v);
+
+        return sum;
+    }
+
+    virtual Vec3d random(const Vec3d &o) const {
+        auto int_size = static_cast<int>(m_Objects.size());
+        return m_Objects[randomInt(0, int_size - 1)]->random(o);
+    }
+
    protected:
     std::vector<std::shared_ptr<IHittable>> m_Objects;
 };

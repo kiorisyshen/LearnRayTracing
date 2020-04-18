@@ -69,13 +69,13 @@ Vec3d Sphere::getCenter() const {
     return (m_Center0 + m_Center1) / 2.0;
 }
 
-double Sphere::pdf_value(const Vec3d &o, const Vec3d &v, double t) const {
+double Sphere::pdf_value(const Vec3d &o, const Vec3d &v) const {
     HitRecord rec;
     GeometryProperty geom;
-    if (!this->hit(Ray(o, v, t), 0.001, INFI, rec, geom))
+    if (!this->hit(Ray(o, v, 0.0), 0.001, INFI, rec, geom))
         return 0.0;
 
-    auto cos_theta_max = sqrt(1.0 - m_Radius * m_Radius / (center(t) - o).squaredNorm());
+    auto cos_theta_max = sqrt(1.0 - m_Radius * m_Radius / (center(0.0) - o).squaredNorm());
     auto solid_angle   = 2.0 * PI * (1.0 - cos_theta_max);
 
     return 1.0 / solid_angle;
@@ -93,8 +93,8 @@ inline Vec3d random_to_sphere(double radius, double distance_squared) {
     return Vec3d(x, y, z);
 }
 
-Vec3d Sphere::random(const Vec3d &o, double t) const {
-    Vec3d direction       = center(t) - o;
+Vec3d Sphere::random(const Vec3d &o) const {
+    Vec3d direction       = center(0.0) - o;
     auto distance_squared = direction.squaredNorm();
     ONB uvw;
     uvw.build_from_w(direction);

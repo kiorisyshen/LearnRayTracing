@@ -29,7 +29,7 @@ int main() {
     int image_height = 600;
 
     HittableList world;
-    std::shared_ptr<IHittable> lights;
+    std::shared_ptr<HittableList> lights;
     Vec3d background(0, 0, 0);
     uint32_t samplePerPix = 100;
     bool useBVHAll        = false;
@@ -40,9 +40,11 @@ int main() {
         auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
         auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(15, 15, 15)));
 
+        auto lightObj = std::make_shared<AARect>(1, 213, 343, 227, 332, 554, light);
+
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
         world.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
-        world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 213, 343, 227, 332, 554, light)));
+        world.add(std::make_shared<FlipFace>(lightObj));
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
         world.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
@@ -58,10 +60,13 @@ int main() {
         // box2                            = std::make_shared<Translate>(box2, Vec3d(130, 0, 65));
         // world.add(box2);
 
-        auto glass                              = std::make_shared<Dielectric>(1.5);
-        std::shared_ptr<IHittable> glass_sphere = std::make_shared<Sphere>(Vec3d(190, 90, 190), 90, glass);
+        auto glass        = std::make_shared<Dielectric>(1.5);
+        auto glass_sphere = std::make_shared<Sphere>(Vec3d(190, 90, 190), 90, glass);
         world.add(glass_sphere);
-        lights = glass_sphere;
+
+        lights = std::make_shared<HittableList>();
+        lights->add(lightObj);
+        lights->add(glass_sphere);
     }
 
     Vec3d camPos(278, 278, -800);

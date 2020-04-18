@@ -42,10 +42,10 @@ bool AARect::hit(const Ray &r, double t_min, double t_max, HitRecord &rec, Geome
     return true;
 }
 
-double AARect::pdf_value(const Vec3d &origin, const Vec3d &v, double t) const {
+double AARect::pdf_value(const Vec3d &origin, const Vec3d &v) const {
     HitRecord rec;
     GeometryProperty geom;
-    if (!this->hit(Ray(origin, v, t), 0.001, INFI, rec, geom))
+    if (!this->hit(Ray(origin, v, 0.0), 0.001, INFI, rec, geom))
         return 0;
 
     auto area             = (x1 - x0) * (y1 - y0);
@@ -55,7 +55,7 @@ double AARect::pdf_value(const Vec3d &origin, const Vec3d &v, double t) const {
     return distance_squared / (cosine * area);
 }
 
-Vec3d AARect::random(const Vec3d &origin, double t) const {
+Vec3d AARect::random(const Vec3d &origin) const {
     Vec3d random_point;
     switch (m_Axis) {
         case 0:
