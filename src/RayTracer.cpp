@@ -12,11 +12,14 @@ static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable
     GeometryProperty geomProp;
     if (world.hit(r, minDistTrace, INFI, rec, geomProp)) {
         Ray r_out;
-        Vec3d attenuation;
+        Vec3d albedo;
+        double samplePDF;
         if (geomProp.materialPtr) {
             Vec3d emitted = geomProp.materialPtr->emitted(rec.u, rec.v, rec.p);
-            if (geomProp.materialPtr->scatter(r, rec, attenuation, r_out)) {
-                return emitted + attenuation * (calcRayColor(r_out, background, world, depth - 1, minDistTrace));
+            if (geomProp.materialPtr->scatter(r, rec, albedo, r_out, samplePDF)) {
+                return emitted + albedo *
+                                     geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
+                                     (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
             } else {
                 return emitted;
             }

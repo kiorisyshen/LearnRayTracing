@@ -15,3 +15,6 @@ add_executable(main main.cpp)
 target_link_libraries(main Utils Geometry RTCore)
 
 add_executable(testMC testMC.cpp)
+
+add_executable(mainRest mainRest.cpp)
+target_link_libraries(mainRest Utils Geometry RTCore)

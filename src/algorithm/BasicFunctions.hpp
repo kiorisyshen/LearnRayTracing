@@ -46,6 +46,14 @@ inline Vec3d random_unit_vector() {
     return Vec3d(r * cos(a), r * sin(a), z);
 }
 
+inline Vec3d random_in_hemisphere(const Vec3d &normal) {
+    Vec3d in_unit_sphere = random_in_unit_sphere();
+    if (in_unit_sphere.dot(normal) > 0.0)  // In the same hemisphere as the normal
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
+}
+
 inline Vec3d random_in_unit_disk() {
     while (true) {
         auto p = Vec3d(randomDouble(-1, 1), randomDouble(-1, 1), 0);
