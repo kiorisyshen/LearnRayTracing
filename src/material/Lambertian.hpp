@@ -1,5 +1,6 @@
 #pragma once
 #include "interface/IMaterial.hpp"
+#include "pdfs/CommonPDFs.hpp"
 
 namespace LearnRT {
 class Lambertian : public IMaterial {
@@ -8,13 +9,10 @@ class Lambertian : public IMaterial {
         : IMaterial(texture) {
     }
 
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &albedo, Ray &r_out, double &pdf) const {
-        // ONB uvw;
-        // uvw.build_from_w(rec.normal);
-        // Vec3d direction = uvw.local(random_cosine_direction());
-        // r_out           = Ray(rec.p, direction, r_in.time());
-        albedo = m_Texture->value(rec.u, rec.v, rec.p);
-        // pdf    = uvw.w().dot(r_out.direction()) / PI;
+    virtual bool scatter(const Ray &r_in, const HitRecord &rec, ScatterRecord &srec) const {
+        srec.is_specular = false;
+        srec.attenuation = m_Texture->value(rec.u, rec.v, rec.p);
+        srec.pdf_ptr     = std::make_shared<PDFCosine>(rec.normal);
         return true;
     }
 

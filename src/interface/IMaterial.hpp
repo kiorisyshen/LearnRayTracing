@@ -1,8 +1,16 @@
 #pragma once
 #include "HitRecord.hpp"
+#include "IPDF.hpp"
 #include "ITexture.hpp"
 
 namespace LearnRT {
+struct ScatterRecord {
+    Ray specular_ray;
+    bool is_specular;
+    Vec3d attenuation;
+    std::shared_ptr<IPDF> pdf_ptr;
+};
+
 class IMaterial {
    public:
     IMaterial(const std::shared_ptr<ITexture> &texture)
@@ -12,9 +20,8 @@ class IMaterial {
     virtual ~IMaterial() {
     }
 
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &albedo, Ray &r_out, double &pdf) const {
-        pdf = 1.0;
-        return scatter(r_in, rec, albedo, r_out);
+    virtual bool scatter(const Ray &r_in, const HitRecord &rec, ScatterRecord &srec) const {
+        return false;
     }
 
     virtual double scattering_pdf(const Ray &r_in, const HitRecord &rec, const Ray &r_out) const {
@@ -22,15 +29,6 @@ class IMaterial {
     }
 
     virtual Vec3d emitted(const Ray &r_in, const HitRecord &rec, double u, double v, const Vec3d &p) const {
-        return Vec3d(0, 0, 0);
-    }
-
-   protected:
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
-        return false;
-    }
-
-    virtual Vec3d emitted(double u, double v, const Vec3d &p) const {
         return Vec3d(0, 0, 0);
     }
 

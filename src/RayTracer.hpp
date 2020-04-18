@@ -12,7 +12,7 @@ class RayTracer {
         : m_MaxRayDepth(maxRayDepth), m_SamplePerPix(samplePerPix), m_OneOverGamma(1.0 / gamma), m_MinDistTrace(minDistTrace), m_UseBVH(useBVH) {
     }
 
-    bool drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world, const Vec3d &background = Vec3d(0, 0, 0));
+    bool drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world, std::shared_ptr<IHittable> lights, const Vec3d &background = Vec3d(0, 0, 0));
 
    private:
     uint32_t m_MaxRayDepth  = 20;

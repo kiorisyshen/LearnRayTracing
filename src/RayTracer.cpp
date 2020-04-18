@@ -1,51 +1,48 @@
 #include "RayTracer.hpp"
 #include "BVHNode.hpp"
-#include "geometry/AARect.hpp"
-#include "interface/IPDF.hpp"
+#include "pdfs/CommonPDFs.hpp"
 
 using namespace LearnRT;
 
-static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable &world, int depth, double minDistTrace) {
+static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable &world, std::shared_ptr<IHittable> lights, int depth, double minDistTrace) {
     if (depth < 1) {
         return Vec3d(0, 0, 0);
     }
 
     HitRecord rec;
     GeometryProperty geomProp;
-    if (world.hit(r, minDistTrace, INFI, rec, geomProp)) {
-        Ray r_out;
-        Vec3d albedo;
-        double samplePDF;
-        if (geomProp.materialPtr) {
-            Vec3d emitted = geomProp.materialPtr->emitted(r, rec, rec.u, rec.v, rec.p);
-            if (geomProp.materialPtr->scatter(r, rec, albedo, r_out, samplePDF)) {
-                static std::shared_ptr<IHittable> light_ptr = std::make_shared<AARect>(1, 213, 343, 227, 332, 554, nullptr);
-
-                std::shared_ptr<PDFHittable> p0 = std::make_shared<PDFHittable>(light_ptr, rec.p);
-                std::shared_ptr<PDFCosine> p1   = std::make_shared<PDFCosine>(rec.normal);
-                PDFMixture p(p0, p1);
-
-                r_out     = Ray(rec.p, p.generate(), r.time());
-                samplePDF = p.value(r_out.direction());
-
-                return emitted + albedo *
-                                     geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
-                                     (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
-            } else {
-                return emitted;
-            }
-        }
+    if (!world.hit(r, minDistTrace, INFI, rec, geomProp)) {
+        return background;
     }
 
-    return background;
+    if (!geomProp.materialPtr) {
+        return background;
+    }
 
-    // Old sky
-    // Vec3d unit_direction = r.direction().normalized();
-    // auto t               = 0.5 * (unit_direction(1) + 1.0);
-    // return (1.0 - t) * Vec3d(1.0, 1.0, 1.0) + t * Vec3d(0.5, 0.7, 1.0);
+    Ray r_out;
+    double samplePDF;
+    ScatterRecord srec;
+    Vec3d emitted = geomProp.materialPtr->emitted(r, rec, rec.u, rec.v, rec.p);
+    if (!geomProp.materialPtr->scatter(r, rec, srec)) {
+        return emitted;
+    }
+
+    if (srec.is_specular) {
+        return srec.attenuation * calcRayColor(srec.specular_ray, background, world, lights, depth - 1, minDistTrace);
+    }
+
+    auto pdfLight = std::make_shared<PDFHittable>(lights, rec.p);
+    PDFMixture p(pdfLight, srec.pdf_ptr);
+
+    r_out     = Ray(rec.p, p.generate(), r.time());
+    samplePDF = p.value(r_out.direction());
+
+    return emitted + srec.attenuation *
+                         geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
+                         (calcRayColor(r_out, background, world, lights, depth - 1, minDistTrace)) / samplePDF;
 }
 
-bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world, const Vec3d &background) {
+bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const HittableList &world, std::shared_ptr<IHittable> lights, const Vec3d &background) {
     bool ret = true;
 
     const int image_width  = frame.getWidth();
@@ -67,10 +64,10 @@ bool RayTracer::drawFrame(Frame<Vec3d> &frame, const Camera &camera, const Hitta
                 auto u = (i + randomDouble()) / image_width;
                 auto v = (j + randomDouble()) / image_height;
                 if (m_UseBVH) {
-                    currColor += calcRayColor(camera.getRay(u, v), background, *bvhRoot, m_MaxRayDepth, m_MinDistTrace);
+                    currColor += calcRayColor(camera.getRay(u, v), background, *bvhRoot, lights, m_MaxRayDepth, m_MinDistTrace);
                     continue;
                 }
-                currColor += calcRayColor(camera.getRay(u, v), background, world, m_MaxRayDepth, m_MinDistTrace);
+                currColor += calcRayColor(camera.getRay(u, v), background, world, lights, m_MaxRayDepth, m_MinDistTrace);
             }
 
             currColor      = currColor / m_SamplePerPix;

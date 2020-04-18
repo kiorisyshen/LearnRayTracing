@@ -8,12 +8,13 @@ class Metal : public IMaterial {
         : IMaterial(std::make_shared<ConstantTexture>(a)), m_Fuzz(fuzz < 1.0 ? fuzz : 1.0) {
     }
 
-    virtual bool scatter(const Ray &r_in, const HitRecord &rec, Vec3d &attenuation, Ray &r_out) const {
-        Vec3d reflected = reflect(r_in.direction(), rec.normal);
-        // r_out           = Ray(p, reflected);
-        r_out       = Ray(rec.p, reflected + m_Fuzz * random_in_unit_sphere(), r_in.time());
-        attenuation = m_Texture->value(rec.u, rec.v, rec.p);
-        return (r_out.direction().dot(rec.normal) > 0);
+    virtual bool scatter(const Ray &r_in, const HitRecord &rec, ScatterRecord &srec) const {
+        Vec3d reflected   = reflect(r_in.direction(), rec.normal);
+        srec.specular_ray = Ray(rec.p, reflected + m_Fuzz * random_in_unit_sphere(), r_in.time());
+        srec.attenuation  = m_Texture->value(rec.u, rec.v, rec.p);
+        srec.is_specular  = true;
+        srec.pdf_ptr      = nullptr;
+        return (srec.specular_ray.direction().dot(rec.normal) > 0);
     }
 
    public:
