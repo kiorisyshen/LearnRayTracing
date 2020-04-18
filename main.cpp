@@ -8,7 +8,7 @@
 #include "geometry/Sphere.hpp"
 #include "geometry/Transforms.hpp"
 #include "io/PPM.hpp"
-// #include "material/Dielectric.hpp"
+#include "material/Dielectric.hpp"
 #include "material/DiffuseLight.hpp"
 #include "material/Lambertian.hpp"
 #include "material/Metal.hpp"
@@ -40,25 +40,28 @@ int main() {
         auto green = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vec3d(0.12, 0.45, 0.15)));
         auto light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vec3d(15, 15, 15)));
 
-        lights = std::make_shared<AARect>(1, 213, 343, 227, 332, 554, light);
-
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(0, 0, 555, 0, 555, 555, green)));
         world.add(std::make_shared<AARect>(0, 0, 555, 0, 555, 0, red));
-        world.add(std::make_shared<FlipFace>(lights));
+        world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 213, 343, 227, 332, 554, light)));
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(1, 0, 555, 0, 555, 555, white)));
         world.add(std::make_shared<AARect>(1, 0, 555, 0, 555, 0, white));
         world.add(std::make_shared<FlipFace>(std::make_shared<AARect>(2, 0, 555, 0, 555, 555, white)));
 
-        std::shared_ptr<IMaterial> aluminum = std::make_shared<Metal>(Vec3d(0.8, 0.85, 0.88), 0.0);
-        std::shared_ptr<IHittable> box1     = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 330, 165), aluminum);
-        box1                                = std::make_shared<RotateY>(box1, PI * 15.0 / 180.0);
-        box1                                = std::make_shared<Translate>(box1, Vec3d(265, 0, 295));
+        // std::shared_ptr<IMaterial> aluminum = std::make_shared<Metal>(Vec3d(0.8, 0.85, 0.88), 0.0);
+        std::shared_ptr<IHittable> box1 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 330, 165), white);
+        box1                            = std::make_shared<RotateY>(box1, PI * 15.0 / 180.0);
+        box1                            = std::make_shared<Translate>(box1, Vec3d(265, 0, 295));
         world.add(box1);
 
-        std::shared_ptr<IHittable> box2 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 165, 165), white);
-        box2                            = std::make_shared<RotateY>(box2, -PI * 18.0 / 180.0);
-        box2                            = std::make_shared<Translate>(box2, Vec3d(130, 0, 65));
-        world.add(box2);
+        // std::shared_ptr<IHittable> box2 = std::make_shared<Box>(Vec3d(0, 0, 0), Vec3d(165, 165, 165), white);
+        // box2                            = std::make_shared<RotateY>(box2, -PI * 18.0 / 180.0);
+        // box2                            = std::make_shared<Translate>(box2, Vec3d(130, 0, 65));
+        // world.add(box2);
+
+        auto glass                              = std::make_shared<Dielectric>(1.5);
+        std::shared_ptr<IHittable> glass_sphere = std::make_shared<Sphere>(Vec3d(190, 90, 190), 90, glass);
+        world.add(glass_sphere);
+        lights = glass_sphere;
     }
 
     Vec3d camPos(278, 278, -800);
