@@ -12,8 +12,12 @@ class DiffuseLight : public IMaterial {
         return false;
     }
 
-    virtual Vec3d emitted(double u, double v, const Vec3d &p) const {
-        return m_Texture->value(u, v, p);
+    virtual Vec3d emitted(const Ray &r_in, const HitRecord &rec, double u, double v, const Vec3d &p) const {
+        if (rec.frontFace) {
+            return m_Texture->value(u, v, p);
+        } else {
+            return Vec3d(0, 0, 0);
+        }
     }
 };
 }  // namespace LearnRT

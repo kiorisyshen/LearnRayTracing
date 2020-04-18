@@ -15,11 +15,31 @@ static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable
         Vec3d albedo;
         double samplePDF;
         if (geomProp.materialPtr) {
-            Vec3d emitted = geomProp.materialPtr->emitted(rec.u, rec.v, rec.p);
+            Vec3d emitted = geomProp.materialPtr->emitted(r, rec, rec.u, rec.v, rec.p);
             if (geomProp.materialPtr->scatter(r, rec, albedo, r_out, samplePDF)) {
+                Vec3d on_light        = Vec3d(randomDouble(213, 343), 554, randomDouble(227, 332));
+                Vec3d to_light        = on_light - rec.p;
+                auto distance_squared = to_light.squaredNorm();
+                to_light              = to_light.normalized();
+
+                if (to_light.dot(rec.normal) < 0)
+                    return emitted;
+
+                double light_area = (343 - 213) * (332 - 227);
+                auto light_cosine = fabs(to_light.y());
+                if (light_cosine < 0.000001)
+                    return emitted;
+
+                samplePDF = distance_squared / (light_cosine * light_area);
+                r_out     = Ray(rec.p, to_light, r.time());
+
                 return emitted + albedo *
                                      geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
                                      (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
+
+                // return emitted + albedo *
+                //                      geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
+                //                      (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
             } else {
                 return emitted;
             }
