@@ -1,5 +1,7 @@
 #include "RayTracer.hpp"
 #include "BVHNode.hpp"
+#include "geometry/AARect.hpp"
+#include "interface/IPDF.hpp"
 
 using namespace LearnRT;
 
@@ -17,29 +19,18 @@ static Vec3d calcRayColor(const Ray &r, const Vec3d &background, const IHittable
         if (geomProp.materialPtr) {
             Vec3d emitted = geomProp.materialPtr->emitted(r, rec, rec.u, rec.v, rec.p);
             if (geomProp.materialPtr->scatter(r, rec, albedo, r_out, samplePDF)) {
-                Vec3d on_light        = Vec3d(randomDouble(213, 343), 554, randomDouble(227, 332));
-                Vec3d to_light        = on_light - rec.p;
-                auto distance_squared = to_light.squaredNorm();
-                to_light              = to_light.normalized();
+                static std::shared_ptr<IHittable> light_ptr = std::make_shared<AARect>(1, 213, 343, 227, 332, 554, nullptr);
 
-                if (to_light.dot(rec.normal) < 0)
-                    return emitted;
+                std::shared_ptr<PDFHittable> p0 = std::make_shared<PDFHittable>(light_ptr, rec.p);
+                std::shared_ptr<PDFCosine> p1   = std::make_shared<PDFCosine>(rec.normal);
+                PDFMixture p(p0, p1);
 
-                double light_area = (343 - 213) * (332 - 227);
-                auto light_cosine = fabs(to_light.y());
-                if (light_cosine < 0.000001)
-                    return emitted;
-
-                samplePDF = distance_squared / (light_cosine * light_area);
-                r_out     = Ray(rec.p, to_light, r.time());
+                r_out     = Ray(rec.p, p.generate(), r.time());
+                samplePDF = p.value(r_out.direction());
 
                 return emitted + albedo *
                                      geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
                                      (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
-
-                // return emitted + albedo *
-                //                      geomProp.materialPtr->scattering_pdf(r, rec, r_out) *
-                //                      (calcRayColor(r_out, background, world, depth - 1, minDistTrace)) / samplePDF;
             } else {
                 return emitted;
             }
