@@ -19,3 +19,6 @@ A repo to learn ray tracing with https://github.com/RayTracing/raytracing.github
 
 - Book 2
   - ![Book2 result](/results/Book2.png)
+
+- Book 3
+  - ![Book3 result](/results/Book3.png)
